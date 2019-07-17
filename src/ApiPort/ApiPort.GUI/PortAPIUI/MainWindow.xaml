@@ -52,19 +52,18 @@
                 <Label  Content="Assembly to analyze: " Padding="0,5,5,5" />
                 <ComboBox  x:Name="AssemComboBox"  IsEnabled="False"  SelectedItem="{Binding SelectedAssembly}" ItemsSource="{Binding ChooseAssemblies}" SelectionChanged="AssemComboBox_SelectionChanged"  />
             </StackPanel>
-            <TextBlock x:Name="AssemCompatibility" Visibility="Hidden"  Margin="0,10,0,30"  >
-               
-            </TextBlock>
+            <TextBlock x:Name="AssemCompatibility"  Text="{Binding Message, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,10,0,30" />
+
 
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
 
-            <DataGrid IsEnabled="False"  x:Name="APIGrid"  ScrollViewer.CanContentScroll="True"  ScrollViewer.VerticalScrollBarVisibility="Auto" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}" AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" >
-       
+            <DataGrid IsEnabled="False"  x:Name="APIGrid"  MaxHeight="450" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}"  AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True" >
+
                 <DataGrid.Columns >
                     
                     <DataGridTextColumn Header="API" Width="*" Binding="{Binding APIName}" />
 
-                    <DataGridCheckBoxColumn Header="Compatibility" Width="Auto"  Binding="{Binding Compatibility}">
+                    <DataGridCheckBoxColumn Header="Compatibility" Width="Auto" IsReadOnly="True" Binding="{Binding Compatibility}">
                         <DataGridCheckBoxColumn.ElementStyle>
                             <Style TargetType="{x:Type CheckBox}">
                                 <Setter Property="IsEnabled" Value="False" />

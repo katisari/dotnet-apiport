@@ -3,8 +3,7 @@
 
 namespace ApiPort
 {
-    public class  WPFApiPortClient
+    public class WPFApiPortClient
     {
-
     }
 }
