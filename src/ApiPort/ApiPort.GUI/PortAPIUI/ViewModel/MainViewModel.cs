@@ -42,7 +42,7 @@ internal class MainViewModel : ViewModelBase
 
     private HashSet<string> _chooseAssemblies;
 
-    public static List<string> _config;
+    public  List<string> _config;
 
     public static List<string> _platform;
 
@@ -293,9 +293,8 @@ internal class MainViewModel : ViewModelBase
 
         foreach (var r in Members)
         {
-            foreach (var assembly in ChooseAssemblies)
             {
-                if (assem.Equals(assembly))
+                if (assem.Equals(r.DefinedInAssemblyIdentity))
                  {
                     AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
                  }
