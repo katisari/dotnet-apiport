@@ -267,7 +267,9 @@ internal class MainViewModel : ViewModelBase
         {
             Message = "Build your project first.";
         }
+
         else
+
         {
             Info info = Rebuild.ChosenBuild(SelectedPath);
             AssembliesPath = info.Assembly;
@@ -333,7 +335,6 @@ internal class MainViewModel : ViewModelBase
                 Config = output.Configuration;
                 Platform = output.Platform;
                 ExeFile = output.Location;
-
             }
         }
     }
