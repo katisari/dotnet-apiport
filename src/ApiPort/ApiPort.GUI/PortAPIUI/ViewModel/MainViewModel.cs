@@ -46,8 +46,9 @@ internal class MainViewModel : ViewModelBase
     public static string _selectedAssembly;
 
     public IList<MemberInfo> _members;
-
+    
     private string _message;
+
 
     public string Message
     {
@@ -55,7 +56,7 @@ internal class MainViewModel : ViewModelBase
         {
             return _message;
         }
-
+        
         set
         {
             _message = value;
