@@ -4,7 +4,7 @@ The .NET Portability Analyzer is an open source standalone tool that simplifies 
 
 Running the tool can do three things: 
 
-1.	Generate a spreadsheet within the UI that will report the level of compatibility that your project has with .NET Core 3.0, including the specific APIs that are currently unsupported. This spreadsheet will also contain information regarding the compatibility of NuGet package updates.
+1.	Generate a spreadsheet within the UI that will report the level of compatibility that your project has with .NET Core 3.0, including the specific APIs that are currently unsupported.
 2.	If chosen, it will generate an export result in html or Excel formats that can then be saved onto your computer. 
 3.	Send this same data to the .NET team at Microsoft so that we can determine which APIs are needed by the most people.
 
