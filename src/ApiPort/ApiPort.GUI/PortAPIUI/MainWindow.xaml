@@ -57,7 +57,6 @@
             </StackPanel>
 
 
-
             <StackPanel x:Name="AssemCompatibility" Orientation="Horizontal" Margin="0,10,0,30" Visibility="{Binding IsMessageVisible}">
                 <Image Source="warning_icon.png" Height="20"></Image>
                 <TextBlock   Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  />
@@ -73,7 +72,9 @@
                     
                     <DataGridTextColumn Header="API" Width="*" Binding="{Binding APIName}" />
 
+
                     <DataGridCheckBoxColumn Header="Compatibility" Width="Auto" IsReadOnly="True"  Binding="{Binding Compatibility}">
+
                         <DataGridCheckBoxColumn.ElementStyle>
                             <Style TargetType="{x:Type CheckBox}">
                                 <Setter Property="IsEnabled" Value="False" />

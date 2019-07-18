@@ -38,11 +38,11 @@ namespace PortAPIUI
             using (StreamReader r = new StreamReader(json1Path))
             {
                 string json = r.ReadToEnd();
-                assemblies = JsonConvert.DeserializeObject<Info>(json);              
+                assemblies = JsonConvert.DeserializeObject<Info>(json);
                 r.Close();
             }
 
-           Message(assemblies);
+            Message(assemblies);
             return assemblies;
         }
 

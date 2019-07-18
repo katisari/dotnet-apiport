@@ -22,14 +22,13 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
 
-
 namespace PortAPIUI
 {
     internal class MsBuildAnalyzer
     {
         private static StringBuilder output = null;
 
-        private Info Items;
+        private Info items;
 
         public static bool MessageBox1 { get; private set; }
 
@@ -54,13 +53,13 @@ namespace PortAPIUI
             using (StreamReader r = new StreamReader(jsonPath))
             {
                 string json = r.ReadToEnd();
-                Items = JsonConvert.DeserializeObject<Info>(json);
+                items = JsonConvert.DeserializeObject<Info>(json);
                 var consoleOutput = output.ToString();
                 r.Close();
             }
 
-            Message(Items);
-            return Items;
+            Message(items);
+            return items;
         }
 
         public static void Message(Info answer)

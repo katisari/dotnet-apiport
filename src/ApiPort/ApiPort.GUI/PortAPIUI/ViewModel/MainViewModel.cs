@@ -4,25 +4,15 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Fx.Portability;
-using Microsoft.Fx.Portability;
 using Microsoft.Fx.Portability.ObjectModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Linq;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
+
 
 internal class MainViewModel : ViewModelBase
 {
@@ -38,7 +28,7 @@ internal class MainViewModel : ViewModelBase
 
     private List<string> _assemblies;
 
-    private List <string> _assembliesPath;
+    private List<string> _assembliesPath;
 
     private HashSet<string> _chooseAssemblies;
 
@@ -62,12 +52,14 @@ internal class MainViewModel : ViewModelBase
 
     private Visibility _isMessageVisible = Visibility.Hidden;
 
+
     public string Message
     {
         get
         {
             return _message;
         }
+
         set
         {
             _message = value;
@@ -81,7 +73,6 @@ internal class MainViewModel : ViewModelBase
             }
             RaisePropertyChanged(nameof(Message));
         }
-
     }
 
     public IList<MemberInfo> Members
@@ -121,9 +112,6 @@ internal class MainViewModel : ViewModelBase
             RaisePropertyChanged(nameof(SelectedPath));
         }
     }
-
-
-
 
     public List<string> Config
     {
@@ -225,6 +213,7 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
+
     public Visibility IsMessageVisible {
 
         get { return _isMessageVisible; }
@@ -238,6 +227,7 @@ internal class MainViewModel : ViewModelBase
     
    
 
+
     public MainViewModel()
     {
         RegisterCommands();
@@ -246,8 +236,6 @@ internal class MainViewModel : ViewModelBase
         _platform = new List<string>();
         _chooseAssemblies = new HashSet<string>();
         _assembliesPath = new List<string>();
-
-        
         AssemblyCollection = new ObservableCollection<ApiViewModel>();
     }
 
@@ -261,6 +249,18 @@ internal class MainViewModel : ViewModelBase
     private void AnalyzeAPI()
 
     {
+
+        Message = string.Empty;
+        Info info = Rebuild.ChosenBuild(SelectedPath);
+        if (Rebuild.MessageBox == true)
+        {
+            Message = "Error: Please build your project first.";
+        }
+       else
+        {
+            AssembliesPath = info.Assembly;
+            ExeFile = info.Location;
+
        
         Rebuild.ChosenBuild(SelectedPath);
         if (Rebuild.MessageBox == true)
@@ -274,6 +274,7 @@ internal class MainViewModel : ViewModelBase
             Info info = Rebuild.ChosenBuild(SelectedPath);
             AssembliesPath = info.Assembly;
             ExeFile = info.Location;
+
 
             ApiAnalyzer analyzer = new ApiAnalyzer();
             var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
@@ -289,20 +290,17 @@ internal class MainViewModel : ViewModelBase
 
     public void AssemblyCollectionUpdate(string assem)
     {
-
-
         AssemblyCollection.Clear();
-
         foreach (var r in Members)
         {
-            {
-                if (assem.Equals(r.DefinedInAssemblyIdentity))
+              {
+               if (assem.Equals(r.DefinedInAssemblyIdentity))
                  {
-                    AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
-                 }
-            }
-         }
 
+                    AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
+                }
+            }
+        }
     }
 
     private void ExecuteOpenFileDialog()
@@ -329,7 +327,9 @@ internal class MainViewModel : ViewModelBase
                 if (MsBuildAnalyzer.MessageBox1 == true)
                 {
                     Message = "Warning: In order to port to .NET Core," +
-            "NuGet References need to be in PackageReference format, not Packages.config.";
+            " NuGet References need to be in PackageReference format." +
+            " For more information go to the Portability Analyzer documentation.";
+
                 }
 
                 Config = output.Configuration;

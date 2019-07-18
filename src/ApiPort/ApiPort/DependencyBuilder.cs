@@ -38,7 +38,6 @@ namespace ApiPort
 #endif
                 .SingleInstance();
 
-
             builder.RegisterInstance<ProductInformation>(productInformation);
 #if !FEATURE_WPF
             builder.RegisterInstance<ICommandLineOptions>(options);
@@ -80,7 +79,7 @@ namespace ApiPort
             builder.Register(context =>
                     new ApiPortService(
                         "https://portability.dot.net",
-                         context.Resolve<ProductInformation>()))
+                        context.Resolve<ProductInformation>()))
                 .As<IApiPortService>()
                     .SingleInstance();
 #endif
@@ -129,17 +128,16 @@ namespace ApiPort
             builder.RegisterType<WPFApiPortClient>()
                 .SingleInstance();
             builder.RegisterInstance<IProgressReporter>(new TextWriterProgressReporter(Console.Out));
+
             // builder.RegisterAdapter<ICommandLineOptions, IApiPortOptions>((ctx, opts) =>
-            //{
+            // {
             //    if (opts.OutputFormats?.Any() == true)
             //    {
             //        return opts;
             //    }
-
             //    return new ReadWriteApiPortOptions(opts);
-            //})
-            //.SingleInstance();
-
+            // })
+            // .SingleInstance();
 #else
             builder.RegisterType<ConsoleApiPort>()
                 .SingleInstance();
