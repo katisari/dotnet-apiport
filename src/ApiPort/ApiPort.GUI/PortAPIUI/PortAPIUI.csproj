@@ -31,7 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove=".net_core_icon.png" />
     <None Remove="check.png" />
+    <None Remove="warning_icon.png" />
     <None Remove="x.png" />
   </ItemGroup>
 
@@ -49,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\ApiPort\DependencyBuilder.cs" Link="DependencyBuilder.cs" />
+    <Resource Include=".net_core_icon.png" />
+    <Resource Include="warning_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
