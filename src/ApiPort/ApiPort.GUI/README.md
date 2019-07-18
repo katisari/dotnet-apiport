@@ -1,6 +1,6 @@
 ## .NET Portability Analyzer GUI
 
-The .NET Portability Analyzer GUI is an open source standalone tool that simplifies your porting experience by identifying the compatibility of your project with .NET Core 3.0. In addition, the tool provides recommended changes for incompatible APIs and also will display a wanring about the format of your NuGet apckaes fi ti is not compatible with .NET Core ([see Troubleshooting](#Troubleshooting)). This GUI tool builds upon the .NET Portability Analyzer standalone tool. The GUI tool, however, focuses on one target framework, .NET Core 3.0, rather than multiple like the .NET Portability Analyzer. The GUI tool also provides the user with extra add-ons to improve the user experience. 
+The .NET Portability Analyzer GUI is an open source standalone tool that simplifies your porting experience by identifying the compatibility of your project with .NET Core 3.0. In addition, the tool provides recommended changes for incompatible APIs and also will display a wanring about the format of your NuGet packages if it is not compatible with .NET Core ([see Troubleshooting](#Troubleshooting)). This GUI tool builds upon the .NET Portability Analyzer standalone tool. The GUI tool, however, focuses on one target framework, .NET Core 3.0, rather than multiple like the .NET Portability Analyzer. The GUI tool also provides the user with extra add-ons to improve the user experience. 
 
 Running the tool can do two things: 
 
