@@ -282,7 +282,8 @@ internal class MainViewModel : ViewModelBase
                 {
                     Message = "Warning: In order to port to .NET Core," +
             " NuGet References need to be in PackageReference format." +
-            " For more information go to the Portabiltiy Analyzer documentation.";
+            " For more information go to the Portability Analyzer documentation.";
+
                 }
 
                 Config = output.Configuration;
