@@ -4,25 +4,14 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Fx.Portability;
-using Microsoft.Fx.Portability;
 using Microsoft.Fx.Portability.ObjectModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Linq;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 
 internal class MainViewModel : ViewModelBase
 {
@@ -261,15 +250,13 @@ internal class MainViewModel : ViewModelBase
     private void AnalyzeAPI()
 
     {
-       
+        Message = string.Empty;
         Rebuild.ChosenBuild(SelectedPath);
         if (Rebuild.MessageBox == true)
         {
             Message = "Build your project first.";
         }
-
         else
-
         {
             Info info = Rebuild.ChosenBuild(SelectedPath);
             AssembliesPath = info.Assembly;

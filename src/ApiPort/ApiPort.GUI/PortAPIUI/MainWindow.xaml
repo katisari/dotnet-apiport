@@ -52,7 +52,7 @@
 
         <StackPanel  Grid.Row="2" Grid.Column="0" Orientation="Vertical" Margin="10,10.16,10,10.32" Grid.ColumnSpan="2"  >
             <StackPanel Orientation="Vertical"  Margin="0,10,0,0" >
-                <Label  Content="Assembly to analyze: " Padding="0,5,5,5" />
+                <Label  Content="Assembly: " Padding="0,5,5,5" />
                 <ComboBox  x:Name="AssemComboBox" SelectedIndex="0" IsEnabled="False"  SelectedItem="{Binding SelectedAssembly}" ItemsSource="{Binding ChooseAssemblies}" SelectionChanged="AssemComboBox_SelectionChanged"  />
             </StackPanel>
 
