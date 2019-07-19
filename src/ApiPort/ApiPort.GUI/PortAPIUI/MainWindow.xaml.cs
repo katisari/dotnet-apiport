@@ -15,7 +15,7 @@ namespace PortAPIUI
     {
         public MainWindow()
         {
-            DataContext = new MainViewModel { Service = App.Resolve<IApiPortService>()};
+            DataContext = new MainViewModel { Service = App.Resolve<IApiPortService>() };
             InitializeComponent();
         }
 
@@ -42,9 +42,12 @@ namespace PortAPIUI
         // Enables export button, and table wehn analyze button is clicked
         private void BStart_Click(object sender, RoutedEventArgs e)
         {
+
+            
             ExportBtn.IsEnabled = true;
             APIGrid.IsEnabled = true;
             AssemComboBox.IsEnabled = true;
+            
         }
 
         // Removes IsInDesignMode Column from datagrid
@@ -61,11 +64,14 @@ namespace PortAPIUI
         // Populates datagrid based on selected assembly
         private void AssemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+
             var vm = this.DataContext as MainViewModel;
-            vm.AssemblyCollection.Clear();
-            var assem = vm.SelectedAssembly;
-            vm.AssemblyCollectionUpdate(assem);
+            string assem = "All Assemblies";
+            if (assem != null)
+            {
+                vm.AssemblyCollectionUpdate(assem);
+            }
+
         }
     }
 }

@@ -1,25 +1,21 @@
-﻿using Microsoft.Fx.Portability;
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using Microsoft.Fx.Portability;
 using Microsoft.Fx.Portability.ObjectModel;
 using Microsoft.Fx.Portability.Reporting;
 using Microsoft.Fx.Portability.Resources;
 using System;
-
 using System.Collections.Generic;
-
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-
-
 namespace PortAPIUI
-
 {
-
     internal class ExportResult
     {
         private static string inputPath;
@@ -53,7 +49,6 @@ namespace PortAPIUI
             bool jsonAdded = false;
             AnalyzeResponse response = null;
             List<string> exportFormat = new List<string>();
-
             exportFormat.Add(fileExtension.Substring(1));
             var results = await service.SendAnalysisAsync(request, exportFormat);
             var myResult = results.Response;
@@ -68,7 +63,6 @@ namespace PortAPIUI
                     {
                         continue;
                     }
-
                 }
 
                 outputPath = await CreateReport(result.Data, exportPath, fileExtension, true);

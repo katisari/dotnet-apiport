@@ -8,10 +8,13 @@ using Microsoft.Fx.Portability.ObjectModel;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 internal class MainViewModel : ViewModelBase
 {
@@ -27,7 +30,7 @@ internal class MainViewModel : ViewModelBase
 
     private List<string> _assemblies;
 
-    private List <string> _assembliesPath;
+    private List<string> _assembliesPath;
 
     private HashSet<string> _chooseAssemblies;
 
@@ -49,7 +52,51 @@ internal class MainViewModel : ViewModelBase
 
     private  string _message;
 
-    private Visibility _isMessageVisible = Visibility.Hidden;
+    public Visibility _isMessageVisible = Visibility.Hidden;
+
+    private bool _isEnabled = false;
+
+   
+   // private string _image;
+
+   /* public string Image
+    {
+        get
+        {
+            return _image;
+        }
+        set
+        {
+            _image = value;
+            RaisePropertyChanged(nameof(Image));
+        }
+    }
+    public Image IconImage
+    {
+        get
+        {
+            return _iconImage;
+        }
+        set
+        {
+            _iconImage = value;
+            RaisePropertyChanged(nameof(IconImage));
+        }
+    }*/
+
+    public bool IsEnabled
+    {
+        get
+        {
+            return _isEnabled;
+        }
+
+        set
+        {
+            _isEnabled = value;
+            RaisePropertyChanged(nameof(IsEnabled));
+        }
+    }
 
     public string Message
     {
@@ -57,6 +104,7 @@ internal class MainViewModel : ViewModelBase
         {
             return _message;
         }
+
         set
         {
             _message = value;
@@ -70,7 +118,6 @@ internal class MainViewModel : ViewModelBase
             }
             RaisePropertyChanged(nameof(Message));
         }
-
     }
 
     public IList<MemberInfo> Members
@@ -110,9 +157,6 @@ internal class MainViewModel : ViewModelBase
             RaisePropertyChanged(nameof(SelectedPath));
         }
     }
-
-
-
 
     public List<string> Config
     {
@@ -214,6 +258,7 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
+
     public Visibility IsMessageVisible {
 
         get { return _isMessageVisible; }
@@ -227,6 +272,7 @@ internal class MainViewModel : ViewModelBase
     
    
 
+
     public MainViewModel()
     {
         RegisterCommands();
@@ -235,9 +281,8 @@ internal class MainViewModel : ViewModelBase
         _platform = new List<string>();
         _chooseAssemblies = new HashSet<string>();
         _assembliesPath = new List<string>();
-
-        
         AssemblyCollection = new ObservableCollection<ApiViewModel>();
+
     }
 
     private void RegisterCommands()
@@ -250,50 +295,54 @@ internal class MainViewModel : ViewModelBase
     private void AnalyzeAPI()
 
     {
-        Message = string.Empty;
+
+        Message = "Analyzing...";
         Rebuild.ChosenBuild(SelectedPath);
         if (Rebuild.MessageBox == true)
         {
+           // Image = "warning_icon.png";
             Message = "Build your project first.";
         }
         else
         {
+           
             Info info = Rebuild.ChosenBuild(SelectedPath);
             AssembliesPath = info.Assembly;
-            ExeFile = info.Location;
-
+            ExeFile = info.Location; 
             ApiAnalyzer analyzer = new ApiAnalyzer();
             var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
             analyzeAssembliesTask.Wait();
             Members = analyzeAssembliesTask.Result;
-            foreach (var r in Members)
-            {
-                ChooseAssemblies.Add(r.DefinedInAssemblyIdentity);
-            }
+            
+            ChooseAssemblies.Add("All Assemblies");
 
+            
         }
     }
 
     public void AssemblyCollectionUpdate(string assem)
     {
-
-
+        Message = "";
         AssemblyCollection.Clear();
-
         foreach (var r in Members)
         {
-            {
-                if (assem.Equals(r.DefinedInAssemblyIdentity))
-                 {
-                    AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
-                 }
-            }
-         }
-
+              
+             AssemblyCollection.Add(new ApiViewModel("All Assemblies", r.MemberDocId, false, r.RecommendedChanges));
+                
+            
+        }
     }
 
     private void ExecuteOpenFileDialog()
     {
+
+        ChooseAssemblies = new HashSet<string>();
+        AssemblyCollection.Clear();
+        SelectedPath = null;
+       // SelectedPlatform = null;
+        Platform = new List<string>();
+        Config = new List<string>();
+        IsEnabled = false;
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
@@ -305,6 +354,7 @@ internal class MainViewModel : ViewModelBase
         else
         {
             SelectedPath = null;
+            IsEnabled = false;
         }
 
         MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
@@ -315,8 +365,10 @@ internal class MainViewModel : ViewModelBase
             {
                 if (MsBuildAnalyzer.MessageBox1 == true)
                 {
-                    Message = "Warning: In order to port to .NET Core," +
-            "NuGet References need to be in PackageReference format, not Packages.config.";
+                    Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
+              
+                        
+
                 }
 
                 Config = output.Configuration;
@@ -324,6 +376,7 @@ internal class MainViewModel : ViewModelBase
                 ExeFile = output.Location;
             }
         }
+        Message = "Analyzing...";
     }
 
     private void ExecuteSaveFileDialog()
