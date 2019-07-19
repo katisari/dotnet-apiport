@@ -59,13 +59,12 @@
 
             <StackPanel x:Name="AssemCompatibility" Orientation="Horizontal" Margin="0,10,0,30" Visibility="{Binding IsMessageVisible}">
                 <Image Source="warning_icon.png" Height="20"></Image>
-                <TextBlock   Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  />
+                <TextBox Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" IsInactiveSelectionHighlightEnabled="True" />
             </StackPanel>
-            
-           
+
+
 
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
-
             <DataGrid IsEnabled="False"  x:Name="APIGrid"  MaxHeight="450" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}"  AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True" >
 
                 <DataGrid.Columns >

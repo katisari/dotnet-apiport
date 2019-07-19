@@ -32,7 +32,7 @@ internal class MainViewModel : ViewModelBase
 
     private HashSet<string> _chooseAssemblies;
 
-    public  List<string> _config;
+    public List<string> _config;
 
     public static List<string> _platform;
 
@@ -48,10 +48,9 @@ internal class MainViewModel : ViewModelBase
 
     public IList<MemberInfo> _members;
 
-    private  string _message;
+    private string _message;
 
     private Visibility _isMessageVisible = Visibility.Hidden;
-
 
     public string Message
     {
@@ -71,6 +70,7 @@ internal class MainViewModel : ViewModelBase
             {
                 IsMessageVisible = Visibility.Visible;
             }
+
             RaisePropertyChanged(nameof(Message));
         }
     }
@@ -213,20 +213,16 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-
-    public Visibility IsMessageVisible {
-
+    public Visibility IsMessageVisible
+    {
         get { return _isMessageVisible; }
+
         set
         {
             _isMessageVisible = value;
             RaisePropertyChanged(nameof(IsMessageVisible));
         }
     }
-
-    
-   
-
 
     public MainViewModel()
     {
@@ -247,35 +243,18 @@ internal class MainViewModel : ViewModelBase
     }
 
     private void AnalyzeAPI()
-
     {
-
         Message = string.Empty;
         Info info = Rebuild.ChosenBuild(SelectedPath);
         if (Rebuild.MessageBox == true)
         {
-            Message = "Error: Please build your project first.";
+            Message = string.Format("Error: Please build your project first. To build your project, open a command prompt and input:"
+                + " C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe {0} /p:Configuration={1} /p:Platform={2}", SelectedPath,SelectedConfig,SelectedPlatform);
         }
-       else
-        {
-            AssembliesPath = info.Assembly;
-            ExeFile = info.Location;
-
-       
-        Rebuild.ChosenBuild(SelectedPath);
-        if (Rebuild.MessageBox == true)
-        {
-            Message = "Build your project first.";
-        }
-
         else
-
         {
-            Info info = Rebuild.ChosenBuild(SelectedPath);
             AssembliesPath = info.Assembly;
             ExeFile = info.Location;
-
-
             ApiAnalyzer analyzer = new ApiAnalyzer();
             var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
             analyzeAssembliesTask.Wait();
@@ -284,73 +263,69 @@ internal class MainViewModel : ViewModelBase
             {
                 ChooseAssemblies.Add(r.DefinedInAssemblyIdentity);
             }
-
         }
-    }
+}
 
-    public void AssemblyCollectionUpdate(string assem)
+public void AssemblyCollectionUpdate(string assem)
+{
+    AssemblyCollection.Clear();
+    foreach (var r in Members)
     {
-        AssemblyCollection.Clear();
-        foreach (var r in Members)
         {
-              {
-               if (assem.Equals(r.DefinedInAssemblyIdentity))
-                 {
-
-                    AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
-                }
-            }
-        }
-    }
-
-    private void ExecuteOpenFileDialog()
-    {
-        var dialog = new Microsoft.Win32.OpenFileDialog();
-        dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
-        dialog.InitialDirectory = @"C:\";
-        bool? result = dialog.ShowDialog();
-        if (result == true)
-        {
-            SelectedPath = dialog.FileName;
-        }
-        else
-        {
-            SelectedPath = null;
-        }
-
-        MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
-        if (SelectedPath != null)
-        {
-            Info output = msBuild.GetAssemblies(SelectedPath);
-            if (output != null)
+            if (assem.Equals(r.DefinedInAssemblyIdentity))
             {
-                if (MsBuildAnalyzer.MessageBox1 == true)
-                {
-                    Message = "Warning: In order to port to .NET Core," +
-            " NuGet References need to be in PackageReference format." +
-            " For more information go to the Portability Analyzer documentation.";
-
-                }
-
-                Config = output.Configuration;
-                Platform = output.Platform;
-                ExeFile = output.Location;
+                AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
             }
         }
     }
+}
 
-    private void ExecuteSaveFileDialog()
+private void ExecuteOpenFileDialog()
+{
+    var dialog = new Microsoft.Win32.OpenFileDialog();
+    dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
+    dialog.InitialDirectory = @"C:\";
+    bool? result = dialog.ShowDialog();
+    if (result == true)
     {
-        var savedialog = new Microsoft.Win32.SaveFileDialog();
-        savedialog.FileName = "PortablityAnalysisReport";
-        savedialog.DefaultExt = ".text";
-        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
-        bool? result = savedialog.ShowDialog();
-        if (result == true)
+        SelectedPath = dialog.FileName;
+    }
+    else
+    {
+        SelectedPath = null;
+    }
+
+    MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
+    if (SelectedPath != null)
+    {
+        Info output = msBuild.GetAssemblies(SelectedPath);
+        if (output != null)
         {
-            
-            ExportResult exportClass= new ExportResult();
-            exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
+            if (MsBuildAnalyzer.MessageBox1 == true)
+            {
+                Message = "Warning: In order to port to .NET Core," +
+        " NuGet References need to be in PackageReference format." +
+        " For more information go to the Portability Analyzer documentation.";
+
+            }
+
+            Config = output.Configuration;
+            Platform = output.Platform;
         }
     }
+}
+
+private void ExecuteSaveFileDialog()
+{
+    var savedialog = new Microsoft.Win32.SaveFileDialog();
+    savedialog.FileName = "PortablityAnalysisReport";
+    savedialog.DefaultExt = ".text";
+    savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
+    bool? result = savedialog.ShowDialog();
+    if (result == true)
+    {
+        ExportResult exportClass = new ExportResult();
+        exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
+    }
+}
 }
