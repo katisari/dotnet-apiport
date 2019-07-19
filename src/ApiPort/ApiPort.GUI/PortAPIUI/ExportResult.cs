@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+
+using CsvHelper;
 using Microsoft.Fx.Portability;
 using Microsoft.Fx.Portability.ObjectModel;
 using Microsoft.Fx.Portability.Reporting;
@@ -43,12 +45,24 @@ namespace PortAPIUI
         public async void ExportApiResult(string selectedPathToExport, IApiPortService service, string exportPath)
         {
             string fileExtension = Path.GetExtension(exportPath);
+            bool isCSV = false;
+
+            if (fileExtension == ".csv")
+            {
+                isCSV = true;
+                fileExtension = ".json";
+            }
+
+            string simpleFileExtension = GetFileFormat(fileExtension);
+
             ApiAnalyzer apiAnalyzerClass = new ApiAnalyzer();
             AnalyzeRequest request = apiAnalyzerClass.GenerateRequestFromDepedencyInfo(selectedPathToExport, service);
             bool jsonAdded = false;
             AnalyzeResponse response = null;
             List<string> exportFormat = new List<string>();
-            exportFormat.Add(fileExtension.Substring(1));
+
+            exportFormat.Add(simpleFileExtension);
+
             var results = await service.SendAnalysisAsync(request, exportFormat);
             var myResult = results.Response;
             string outputPath = string.Empty;
@@ -58,16 +72,47 @@ namespace PortAPIUI
                 if (string.Equals(Json, result.Format, StringComparison.OrdinalIgnoreCase))
                 {
                     response = result.Data?.Deserialize<AnalyzeResponse>();
+
                     if (jsonAdded)
                     {
                         continue;
                     }
                 }
 
-                outputPath = await CreateReport(result.Data, exportPath, fileExtension, true);
+                if (isCSV)
+                {
+
+                    using (var writer = new StreamWriter(exportPath))
+                    using (var csv = new CsvWriter(writer))
+                    {
+                        csv.WriteRecords(response.MissingDependencies);
+                    }
+                }
+                else
+                {
+                    outputPath = await CreateReport(result.Data, exportPath, fileExtension, true);
+                }
             }
 
             return;
+        }
+
+        private string GetFileFormat(string format)
+        {
+            switch (format)
+            {
+                case ".json":
+                    return format.Substring(1);
+
+                case ".html":
+                    return format.Substring(1);
+
+                case ".xlsx":
+                    return "excel";
+
+                default:
+                    return "json";
+            }
         }
 
         private static string GenerateReportPath(string fileExtension)
