@@ -75,11 +75,9 @@ namespace PortAPIUI
                     {
                         continue;
                     }
-
-
                 }
-
             }
+
 
             foreach (var dependency in response?.MissingDependencies)
             {
@@ -104,7 +102,9 @@ namespace PortAPIUI
             var parentDirectory = System.IO.Directory.GetParent(selectedPath).FullName;
 
             // var parentDirectory = @"C:\Users\t-jaele\Downloads\Paint\Paint";
-            FilePathAssemblyFile name = new FilePathAssemblyFile(selectedPath);
+#pragma warning disable CS0436 // Type conflicts with imported type
+            var name = new FilePathAssemblyFile(selectedPath);
+#pragma warning restore CS0436 // Type conflicts with imported type
             List<string> browserfile = new List<string>();
             browserfile.Add(parentDirectory);
 
@@ -119,7 +119,6 @@ namespace PortAPIUI
 
         private AnalyzeRequest GenerateRequest(IDependencyInfo dependencyInfo)
         {
-
             return new AnalyzeRequest
             {
                 Targets = new List<string> { ".NET Core, Version=3.0" },
@@ -139,11 +138,12 @@ namespace PortAPIUI
                 UnresolvedAssembliesDictionary = dependencyInfo.UnresolvedAssemblies,
                 UserAssemblies = dependencyInfo.UserAssemblies.ToList(),
                 AssembliesWithErrors = dependencyInfo.AssembliesWithErrors.ToList(),
-                ApplicationName = "",
+                ApplicationName = string.Empty,
                 Version = AnalyzeRequest.CurrentVersion,
                 RequestFlags = AnalyzeRequestFlags.ShowNonPortableApis,
                 BreakingChangesToSuppress = new List<string>(),
-                //change later
+
+                // change later
                 ReferencedNuGetPackages = new List<string>()
             };
         }
@@ -184,7 +184,9 @@ namespace PortAPIUI
                     // assemblies to analyze since others are not valid assemblies
                     if (HasValidPEExtension(path))
                     {
+#pragma warning disable CS0436 // Type conflicts with imported type
                         var filePath = new FilePathAssemblyFile(path);
+#pragma warning restore CS0436 // Type conflicts with imported type
                         if (inputAssemblies.TryGetValue(filePath, out var isAssemblySpecified))
                         {
                             // If the assembly already exists, and it was not

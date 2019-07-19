@@ -6,19 +6,11 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Locator;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using NuGet;
-using NuGet.Resources;
 using PortAPI.Shared;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
-using HttpClient = System.Net.Http.HttpClient;
 
 namespace MSBuildAnalyzer
 {
@@ -54,7 +46,7 @@ namespace MSBuildAnalyzer
 
         public static List<string> Platforms { get => platforms; set => platforms = value; }
 
-        public static StringBuilder output;
+        public static StringBuilder Output;
 
         public static void BuildIt(string csProjPath, string jsonPath)
         {

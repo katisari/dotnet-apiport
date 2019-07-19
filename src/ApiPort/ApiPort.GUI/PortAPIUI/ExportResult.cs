@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+
 using CsvHelper;
 using Microsoft.Fx.Portability;
 using Microsoft.Fx.Portability.ObjectModel;
@@ -59,7 +60,9 @@ namespace PortAPIUI
             bool jsonAdded = false;
             AnalyzeResponse response = null;
             List<string> exportFormat = new List<string>();
+
             exportFormat.Add(simpleFileExtension);
+
             var results = await service.SendAnalysisAsync(request, exportFormat);
             var myResult = results.Response;
             string outputPath = string.Empty;
@@ -74,7 +77,6 @@ namespace PortAPIUI
                     {
                         continue;
                     }
-
                 }
 
                 if (isCSV)

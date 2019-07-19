@@ -15,7 +15,7 @@ namespace PortAPIUI
     {
         public MainWindow()
         {
-            DataContext = new MainViewModel { Service = App.Resolve<IApiPortService>()};
+            DataContext = new MainViewModel { Service = App.Resolve<IApiPortService>() };
             InitializeComponent();
         }
 
@@ -61,7 +61,6 @@ namespace PortAPIUI
         // Populates datagrid based on selected assembly
         private void AssemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
             var vm = this.DataContext as MainViewModel;
             vm.AssemblyCollection.Clear();
             var assem = vm.SelectedAssembly;

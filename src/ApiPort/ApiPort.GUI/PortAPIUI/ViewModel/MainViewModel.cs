@@ -4,22 +4,15 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Fx.Portability;
-using Microsoft.Fx.Portability;
 using Microsoft.Fx.Portability.ObjectModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Linq;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
+
 
 internal class MainViewModel : ViewModelBase
 {
@@ -35,11 +28,11 @@ internal class MainViewModel : ViewModelBase
 
     private List<string> _assemblies;
 
-    private List <string> _assembliesPath;
+    private List<string> _assembliesPath;
 
     private HashSet<string> _chooseAssemblies;
 
-    public static List<string> _config;
+    public  List<string> _config;
 
     public static List<string> _platform;
 
@@ -51,11 +44,14 @@ internal class MainViewModel : ViewModelBase
 
     public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
 
-    public static string _selectedAssembly;
+    public string _selectedAssembly;
 
     public IList<MemberInfo> _members;
 
-    private static string _message;
+    private  string _message;
+
+    private Visibility _isMessageVisible = Visibility.Hidden;
+
 
     public string Message
     {
@@ -63,12 +59,20 @@ internal class MainViewModel : ViewModelBase
         {
             return _message;
         }
+
         set
         {
             _message = value;
+            if (string.IsNullOrEmpty(value))
+            {
+                IsMessageVisible = Visibility.Hidden;
+            }
+            else
+            {
+                IsMessageVisible = Visibility.Visible;
+            }
             RaisePropertyChanged(nameof(Message));
         }
-
     }
 
     public IList<MemberInfo> Members
@@ -108,9 +112,6 @@ internal class MainViewModel : ViewModelBase
             RaisePropertyChanged(nameof(SelectedPath));
         }
     }
-
-
-
 
     public List<string> Config
     {
@@ -213,7 +214,19 @@ internal class MainViewModel : ViewModelBase
     }
 
 
+    public Visibility IsMessageVisible {
+
+        get { return _isMessageVisible; }
+        set
+        {
+            _isMessageVisible = value;
+            RaisePropertyChanged(nameof(IsMessageVisible));
+        }
+    }
+
+    
    
+
 
     public MainViewModel()
     {
@@ -223,8 +236,6 @@ internal class MainViewModel : ViewModelBase
         _platform = new List<string>();
         _chooseAssemblies = new HashSet<string>();
         _assembliesPath = new List<string>();
-
-        
         AssemblyCollection = new ObservableCollection<ApiViewModel>();
     }
 
@@ -236,46 +247,60 @@ internal class MainViewModel : ViewModelBase
     }
 
     private void AnalyzeAPI()
+
     {
+
+        Message = string.Empty;
+        Info info = Rebuild.ChosenBuild(SelectedPath);
+        if (Rebuild.MessageBox == true)
+        {
+            Message = "Error: Please build your project first.";
+        }
+       else
+        {
+            AssembliesPath = info.Assembly;
+            ExeFile = info.Location;
+
+       
         Rebuild.ChosenBuild(SelectedPath);
         if (Rebuild.MessageBox == true)
         {
-            MessageBox.Show("Build your project first.");
+            Message = "Build your project first.";
         }
- 
-        Info info = Rebuild.ChosenBuild(SelectedPath);
-        AssembliesPath = info.Assembly;
-        ExeFile = info.Location;
 
-        ApiAnalyzer analyzer = new ApiAnalyzer();
-        var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); } );
-        analyzeAssembliesTask.Wait();
-        Members = analyzeAssembliesTask.Result;
-        foreach (var r in Members)
+        else
+
         {
-            ChooseAssemblies.Add(r.DefinedInAssemblyIdentity);
-        }
-       
+            Info info = Rebuild.ChosenBuild(SelectedPath);
+            AssembliesPath = info.Assembly;
+            ExeFile = info.Location;
 
+
+            ApiAnalyzer analyzer = new ApiAnalyzer();
+            var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
+            analyzeAssembliesTask.Wait();
+            Members = analyzeAssembliesTask.Result;
+            foreach (var r in Members)
+            {
+                ChooseAssemblies.Add(r.DefinedInAssemblyIdentity);
+            }
+
+        }
     }
 
     public void AssemblyCollectionUpdate(string assem)
     {
-
-
         AssemblyCollection.Clear();
-
         foreach (var r in Members)
         {
-            foreach (var assembly in ChooseAssemblies)
-            {
-                if (assem.Equals(assembly))
+              {
+               if (assem.Equals(r.DefinedInAssemblyIdentity))
                  {
-                    AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
-                 }
-            }
-         }
 
+                    AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
+                }
+            }
+        }
     }
 
     private void ExecuteOpenFileDialog()
@@ -302,7 +327,9 @@ internal class MainViewModel : ViewModelBase
                 if (MsBuildAnalyzer.MessageBox1 == true)
                 {
                     Message = "Warning: In order to port to .NET Core," +
-            "NuGet References need to be in PackageReference format, not Packages.config.";
+            " NuGet References need to be in PackageReference format." +
+            " For more information go to the Portability Analyzer documentation.";
+
                 }
 
                 Config = output.Configuration;
@@ -321,6 +348,7 @@ internal class MainViewModel : ViewModelBase
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {
+            
             ExportResult exportClass= new ExportResult();
             exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
         }

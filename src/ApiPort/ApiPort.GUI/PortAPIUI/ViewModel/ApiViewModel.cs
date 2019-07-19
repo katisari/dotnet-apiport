@@ -14,7 +14,6 @@ namespace PortAPIUI.ViewModel
         private bool compatibility;
         private string changes;
 
-
         public ApiViewModel(string name, string apiName, bool compatibility, string changes)
         {
             AssemblyName = name;
@@ -22,8 +21,6 @@ namespace PortAPIUI.ViewModel
             Compatibility = compatibility;
             Changes = changes;
         }
-
-
 
         public string AssemblyName
         {
@@ -66,6 +63,7 @@ namespace PortAPIUI.ViewModel
                 RaisePropertyChanged(nameof(Compatibility));
             }
         }
+
         public string Changes
         {
             get
@@ -79,6 +77,5 @@ namespace PortAPIUI.ViewModel
                 RaisePropertyChanged(nameof(Changes));
             }
         }
-
     }
 }
