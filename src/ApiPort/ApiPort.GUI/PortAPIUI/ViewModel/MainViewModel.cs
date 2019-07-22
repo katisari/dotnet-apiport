@@ -249,7 +249,7 @@ internal class MainViewModel : ViewModelBase
     {
         Message = string.Empty;
         Info info = Rebuild.ChosenBuild(SelectedPath);
-        if (Rebuild.MessageBox == true)
+        if (info.Build == false)
         {
             Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
         }
@@ -303,7 +303,7 @@ internal class MainViewModel : ViewModelBase
             Info output = msBuild.GetAssemblies(SelectedPath);
             if (output != null)
             {
-                if (MsBuildAnalyzer.MessageBox1 == true)
+                if (output.Package == false)
                 {
                     Message = "Warning: In order to port to .NET Core," +
             " NuGet References need to be in PackageReference format." +

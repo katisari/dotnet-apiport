@@ -7,7 +7,7 @@ namespace PortAPI.Shared
 {
     public class Info
     {
-        public string Build { get; set; }
+        public bool Build { get; set; }
 
         public List<string> Configuration { get; set; }
 
@@ -21,7 +21,7 @@ namespace PortAPI.Shared
 
         public bool Package { get; set; }
 
-        public Info(string build, List<string> configuration, List<string> platform, string targetPath, List<string> assembly, string location, bool package)
+        public Info(bool build, List<string> configuration, List<string> platform, string targetPath, List<string> assembly, string location, bool package)
         {
             Build = build;
             Configuration = configuration;

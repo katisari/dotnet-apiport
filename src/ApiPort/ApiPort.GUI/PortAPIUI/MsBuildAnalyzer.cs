@@ -58,20 +58,7 @@ namespace PortAPIUI
                 r.Close();
             }
 
-            Message(items);
             return items;
-        }
-
-        public static void Message(Info answer)
-        {
-            if (answer.Package == false)
-            {
-                MessageBox1 = true;
-            }
-            else
-            {
-                MessageBox1 = false;
-            }
         }
 
         private static void SortOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
