@@ -49,9 +49,12 @@ internal class MainViewModel : ViewModelBase
 
     private string _message;
 
+
     public Visibility _isMessageVisible = Visibility.Hidden;
 
+
     public Visibility _isIconVisible = Visibility.Hidden;
+
 
     private bool _isEnabled = false;
 
@@ -109,6 +112,7 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
+
     public string Message
     {
         get
@@ -127,6 +131,7 @@ internal class MainViewModel : ViewModelBase
             {
                 IsMessageVisible = Visibility.Visible;
             }
+
             RaisePropertyChanged(nameof(Message));
         }
     }
@@ -270,12 +275,14 @@ internal class MainViewModel : ViewModelBase
     }
 
 
+
     public Visibility IsMessageVisible
     {
         get
         {
             return _isMessageVisible;
         }
+
 
         set
         {
@@ -305,6 +312,7 @@ internal class MainViewModel : ViewModelBase
 
     private void AnalyzeAPI()
     {
+
         Message = "Analyzing...";
         IsIconVisible = Visibility.Collapsed;
 
@@ -313,9 +321,12 @@ internal class MainViewModel : ViewModelBase
             Info info = Rebuild.ChosenBuild(SelectedPath);
 
             if (Rebuild.IsProjectBuilt == true)
+
+
             {
                 Message = "Build your project first.";
             }
+
             else
             {
                 AssembliesPath = info.Assembly;
@@ -335,18 +346,32 @@ internal class MainViewModel : ViewModelBase
         });
     }
 
-    public void AssemblyCollectionUpdate(string assem)
+
+public void AssemblyCollectionUpdate(string assem)
+{
+    AssemblyCollection.Clear();
+    foreach (var r in Members)
     {
+
         Message = string.Empty;
         AssemblyCollection.Clear();
         foreach (var r in Members)
         {
             AssemblyCollection.Add(new ApiViewModel("All Assemblies", r.MemberDocId, false, r.RecommendedChanges));
+
         }
     }
+}
 
-    private void ExecuteOpenFileDialog()
+private void ExecuteOpenFileDialog()
+{
+    var dialog = new Microsoft.Win32.OpenFileDialog();
+    dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
+    dialog.InitialDirectory = @"C:\";
+    bool? result = dialog.ShowDialog();
+    if (result == true)
     {
+
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
@@ -397,6 +422,7 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
+
     private void ResetAnalyzer()
     {
         ChooseAssemblies.Clear();
@@ -421,5 +447,5 @@ internal class MainViewModel : ViewModelBase
             ExportResult exportClass = new ExportResult();
             exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
         }
-    }
+
 }
