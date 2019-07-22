@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D325BEFC-0712-4D0F-9D8F-B68371382DEF}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>BuildcsprojtoMem</RootNamespace>
+    <RootNamespace>BuildProj</RootNamespace>
     <AssemblyName>BuildProj</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
