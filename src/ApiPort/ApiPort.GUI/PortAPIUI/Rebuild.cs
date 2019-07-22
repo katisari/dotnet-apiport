@@ -14,7 +14,7 @@ namespace PortAPIUI
     {
         private static StringBuilder outputConsole = null;
 
-        public static bool MessageBox { get; set; }
+        public static bool IsProjectBuilt { get; set; }
 
         public static Info ChosenBuild(string path)
         {
@@ -58,11 +58,11 @@ namespace PortAPIUI
         {
             if (answer.Build.Equals("False"))
             {
-                MessageBox = true;
+                IsProjectBuilt = true;
             }
             else
             {
-                MessageBox = false;
+                IsProjectBuilt = false;
             }
         }
     }

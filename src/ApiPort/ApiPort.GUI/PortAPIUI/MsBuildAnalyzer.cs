@@ -50,12 +50,12 @@ namespace PortAPIUI
             process.BeginOutputReadLine();
             process.WaitForExit();
             process.Close();
+
             using (StreamReader r = new StreamReader(jsonPath))
             {
                 string json = r.ReadToEnd();
                 items = JsonConvert.DeserializeObject<Info>(json);
                 var consoleOutput = output.ToString();
-                r.Close();
             }
 
             Message(items);

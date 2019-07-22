@@ -78,7 +78,6 @@ namespace PortAPIUI
                 }
             }
 
-
             foreach (var dependency in response?.MissingDependencies)
             {
                 if (dependency.MemberDocId != "")

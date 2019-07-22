@@ -2,19 +2,16 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 
-using CsvHelper;
 using Microsoft.Fx.Portability;
 using Microsoft.Fx.Portability.ObjectModel;
 using Microsoft.Fx.Portability.Reporting;
 using Microsoft.Fx.Portability.Resources;
 using System;
+using CsvHelper;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace PortAPIUI
 {

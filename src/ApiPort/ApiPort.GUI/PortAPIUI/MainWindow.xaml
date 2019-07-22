@@ -28,6 +28,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -52,15 +53,26 @@
 
         <StackPanel  Grid.Row="2" Grid.Column="0" Orientation="Vertical" Margin="10,10.16,10,10.32" Grid.ColumnSpan="2"  >
             <StackPanel Orientation="Vertical"  Margin="0,10,0,0" >
-                <Label  Content="Assembly to analyze: " Padding="0,5,5,5" />
-                <ComboBox  x:Name="AssemComboBox" SelectedIndex="0" IsEnabled="False"  SelectedItem="{Binding SelectedAssembly}" ItemsSource="{Binding ChooseAssemblies}" SelectionChanged="AssemComboBox_SelectionChanged"  />
+                <Label  Content="Assembly: " Padding="0,5,5,5" />
+                <ComboBox  x:Name="AssemComboBox" IsEnabled="False"  SelectedItem="{Binding SelectedAssembly}" ItemsSource="{Binding ChooseAssemblies}" SelectionChanged="AssemComboBox_SelectionChanged"  />
             </StackPanel>
 
 
-            <StackPanel x:Name="AssemCompatibility" Orientation="Horizontal" Margin="0,10,0,30" Visibility="{Binding IsMessageVisible}">
-                <Image Source="warning_icon.png" Height="20"></Image>
-                <TextBox Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" IsInactiveSelectionHighlightEnabled="True" />
-            </StackPanel>
+
+            <Grid x:Name="AssemCompatibility" HorizontalAlignment="Left" VerticalAlignment="Center"   Grid.ColumnSpan="3"  Margin="0,10,0,30" Visibility="{Binding IsMessageVisible}" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
+
+
+                </Grid.ColumnDefinitions>
+                <Image x:Name="Icon" Source="warning_icon.png" Height="16" Visibility="{Binding IsIconVisible}" Grid.Column="0"></Image>
+                <TextBlock  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"   />
+            </Grid>
+            
+           
+
+            <Label Content="Incompatibile APIs:"  Padding="0,5,5,5" ></Label>
 
 
 
@@ -70,6 +82,7 @@
                 <DataGrid.Columns >
                     
                     <DataGridTextColumn Header="API" Width="*" Binding="{Binding APIName}" />
+                    
 
 
                     <DataGridCheckBoxColumn Header="Compatibility" Width="Auto" IsReadOnly="True"  Binding="{Binding Compatibility}">
@@ -80,7 +93,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type CheckBox}">
-                                            <Image MaxWidth="20" MaxHeight="20">
+                                            <Image MaxWidth="16" MaxHeight="16">
                                                 <Image.Style>
                                                     <Style TargetType="{x:Type Image}">
                                                         <Setter Property="Source" Value="x.png" />
@@ -104,9 +117,7 @@
             </DataGrid>
 
             <Button x:Name="ExportBtn" Command="{Binding Export}" Content="Export" Width ="75"  Height="23" IsEnabled="False" HorizontalAlignment="Left" Margin="0,30,0,0"  />
-            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Stretch"  >
-             <Hyperlink Click="About_Click"> About this tool </Hyperlink>
-            </TextBlock>
+        
 
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Margin="15,15,15,14.84">
@@ -114,9 +125,12 @@
             <Button x:Name="AnalzeBtn" Click="BStart_Click" Command="{Binding Analyze}" IsEnabled="{Binding ElementName=PathTextbox,Path=Text.Length}" Content="Analyze"  Margin="0,12,0,0"  Height="23" HorizontalAlignment="Stretch" Width="75"   />
         </StackPanel>
 
+        <TextBlock Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10" >
+             <Hyperlink Click="About_Click"> Portablity Analyzer Documentation  </Hyperlink>
+        </TextBlock>
 
-        <Separator Grid.Row="3"  Grid.ColumnSpan="3"  VerticalAlignment="Top" Margin="0,1.68,0,0" />
-        <Grid Grid.Row="3" Grid.ColumnSpan="3" Margin="10,9.68,10,10.04">
+        <Separator Grid.Row="4"  Grid.ColumnSpan="3"  VerticalAlignment="Top" Margin="0,1.68,0,0" />
+        <Grid Grid.Row="4" Grid.ColumnSpan="3" Margin="10,9.68,10,10.04">
 
             <TextBlock TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                 
