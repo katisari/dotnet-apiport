@@ -63,7 +63,6 @@
             </StackPanel>
 
 
-
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
             <DataGrid IsEnabled="False"  x:Name="APIGrid"  MaxHeight="450" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}"  AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True" >
 

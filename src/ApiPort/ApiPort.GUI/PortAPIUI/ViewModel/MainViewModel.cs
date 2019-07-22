@@ -24,6 +24,9 @@ internal class MainViewModel : ViewModelBase
 
     public IApiPortService Service { get; set; }
 
+    private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
+                    + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
+
     private string _selectedPath;
 
     private List<string> _assemblies;
@@ -248,8 +251,7 @@ internal class MainViewModel : ViewModelBase
         Info info = Rebuild.ChosenBuild(SelectedPath);
         if (Rebuild.MessageBox == true)
         {
-            Message = string.Format("Error: Please build your project first. To build your project, open a command prompt and input:"
-                + " C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe {0} /p:Configuration={1} /p:Platform={2}", SelectedPath,SelectedConfig,SelectedPlatform);
+            Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
         }
         else
         {
@@ -264,68 +266,67 @@ internal class MainViewModel : ViewModelBase
                 ChooseAssemblies.Add(r.DefinedInAssemblyIdentity);
             }
         }
-}
+    }
 
-public void AssemblyCollectionUpdate(string assem)
-{
-    AssemblyCollection.Clear();
-    foreach (var r in Members)
+    public void AssemblyCollectionUpdate(string assem)
     {
+        AssemblyCollection.Clear();
+        foreach (var r in Members)
         {
-            if (assem.Equals(r.DefinedInAssemblyIdentity))
             {
-                AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
+                if (assem.Equals(r.DefinedInAssemblyIdentity))
+                {
+                    AssemblyCollection.Add(new ApiViewModel(r.DefinedInAssemblyIdentity, r.MemberDocId, false, r.RecommendedChanges));
+                }
             }
         }
     }
-}
 
-private void ExecuteOpenFileDialog()
-{
-    var dialog = new Microsoft.Win32.OpenFileDialog();
-    dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
-    dialog.InitialDirectory = @"C:\";
-    bool? result = dialog.ShowDialog();
-    if (result == true)
+    private void ExecuteOpenFileDialog()
     {
-        SelectedPath = dialog.FileName;
-    }
-    else
-    {
-        SelectedPath = null;
-    }
-
-    MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
-    if (SelectedPath != null)
-    {
-        Info output = msBuild.GetAssemblies(SelectedPath);
-        if (output != null)
+        var dialog = new Microsoft.Win32.OpenFileDialog();
+        dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
+        dialog.InitialDirectory = @"C:\";
+        bool? result = dialog.ShowDialog();
+        if (result == true)
         {
-            if (MsBuildAnalyzer.MessageBox1 == true)
+            SelectedPath = dialog.FileName;
+        }
+        else
+        {
+            SelectedPath = null;
+        }
+
+        MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
+        if (SelectedPath != null)
+        {
+            Info output = msBuild.GetAssemblies(SelectedPath);
+            if (output != null)
             {
-                Message = "Warning: In order to port to .NET Core," +
-        " NuGet References need to be in PackageReference format." +
-        " For more information go to the Portability Analyzer documentation.";
+                if (MsBuildAnalyzer.MessageBox1 == true)
+                {
+                    Message = "Warning: In order to port to .NET Core," +
+            " NuGet References need to be in PackageReference format." +
+            " For more information go to the Portability Analyzer documentation.";
+                }
 
+                Config = output.Configuration;
+                Platform = output.Platform;
             }
-
-            Config = output.Configuration;
-            Platform = output.Platform;
         }
     }
-}
 
-private void ExecuteSaveFileDialog()
-{
-    var savedialog = new Microsoft.Win32.SaveFileDialog();
-    savedialog.FileName = "PortablityAnalysisReport";
-    savedialog.DefaultExt = ".text";
-    savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
-    bool? result = savedialog.ShowDialog();
-    if (result == true)
+    private void ExecuteSaveFileDialog()
     {
-        ExportResult exportClass = new ExportResult();
-        exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
+        var savedialog = new Microsoft.Win32.SaveFileDialog();
+        savedialog.FileName = "PortablityAnalysisReport";
+        savedialog.DefaultExt = ".text";
+        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
+        bool? result = savedialog.ShowDialog();
+        if (result == true)
+        {
+            ExportResult exportClass = new ExportResult();
+            exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
+        }
     }
-}
 }
