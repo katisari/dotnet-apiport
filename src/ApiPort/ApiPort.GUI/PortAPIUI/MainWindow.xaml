@@ -65,7 +65,7 @@
 
 
                 </Grid.ColumnDefinitions>
-                <Image x:Name="Icon" Source="warning_icon.png" Height="16"  Grid.Column="0"></Image>
+                <Image x:Name="Icon" Source="warning_icon.png" Height="16" Visibility="{Binding IsIconVisible}" Grid.Column="0"></Image>
                 <TextBlock  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"   />
             </Grid>
             

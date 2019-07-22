@@ -8,13 +8,10 @@ using Microsoft.Fx.Portability.ObjectModel;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 
 internal class MainViewModel : ViewModelBase
 {
@@ -32,9 +29,9 @@ internal class MainViewModel : ViewModelBase
 
     private List<string> _assembliesPath;
 
-    private HashSet<string> _chooseAssemblies;
+    private ObservableCollection<string> _chooseAssemblies;
 
-    public  List<string> _config;
+    public List<string> _config;
 
     public static List<string> _platform;
 
@@ -50,39 +47,53 @@ internal class MainViewModel : ViewModelBase
 
     public IList<MemberInfo> _members;
 
-    private  string _message;
+    private string _message;
 
     public Visibility _isMessageVisible = Visibility.Hidden;
 
+    public Visibility _isIconVisible = Visibility.Hidden;
+
     private bool _isEnabled = false;
 
-   
-   // private string _image;
+    public Visibility IsIconVisible
+    {
 
-   /* public string Image
-    {
-        get
-        {
-            return _image;
-        }
+        get { return _isIconVisible; }
         set
         {
-            _image = value;
-            RaisePropertyChanged(nameof(Image));
+            _isIconVisible = value;
+            RaisePropertyChanged(nameof(IsIconVisible));
         }
+
     }
-    public Image IconImage
-    {
-        get
-        {
-            return _iconImage;
-        }
-        set
-        {
-            _iconImage = value;
-            RaisePropertyChanged(nameof(IconImage));
-        }
-    }*/
+
+
+    // private string _image;
+
+    /* public string Image
+     {
+         get
+         {
+             return _image;
+         }
+         set
+         {
+             _image = value;
+             RaisePropertyChanged(nameof(Image));
+         }
+     }
+     public Image IconImage
+     {
+         get
+         {
+             return _iconImage;
+         }
+         set
+         {
+             _iconImage = value;
+             RaisePropertyChanged(nameof(IconImage));
+         }
+     }*/
 
     public bool IsEnabled
     {
@@ -208,7 +219,7 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-    public HashSet<string> ChooseAssemblies
+    public ObservableCollection<string> ChooseAssemblies
     {
         get { return _chooseAssemblies; }
 
@@ -259,9 +270,13 @@ internal class MainViewModel : ViewModelBase
     }
 
 
-    public Visibility IsMessageVisible {
+    public Visibility IsMessageVisible
+    {
+        get
+        {
+            return _isMessageVisible;
+        }
 
-        get { return _isMessageVisible; }
         set
         {
             _isMessageVisible = value;
@@ -269,17 +284,13 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-    
-   
-
-
     public MainViewModel()
     {
         RegisterCommands();
         _assemblies = new List<string>();
         _config = new List<string>();
         _platform = new List<string>();
-        _chooseAssemblies = new HashSet<string>();
+        _chooseAssemblies = new ObservableCollection<string>();
         _assembliesPath = new List<string>();
         AssemblyCollection = new ObservableCollection<ApiViewModel>();
 
@@ -293,62 +304,56 @@ internal class MainViewModel : ViewModelBase
     }
 
     private void AnalyzeAPI()
-
     {
-
         Message = "Analyzing...";
-        Rebuild.ChosenBuild(SelectedPath);
-        if (Rebuild.MessageBox == true)
-        {
-           // Image = "warning_icon.png";
-            Message = "Build your project first.";
-        }
-        else
-        {
-           
-            Info info = Rebuild.ChosenBuild(SelectedPath);
-            AssembliesPath = info.Assembly;
-            ExeFile = info.Location; 
-            ApiAnalyzer analyzer = new ApiAnalyzer();
-            var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
-            analyzeAssembliesTask.Wait();
-            Members = analyzeAssembliesTask.Result;
-            
-            ChooseAssemblies.Add("All Assemblies");
+        IsIconVisible = Visibility.Collapsed;
 
-            
-        }
+        Task.Run(async () =>
+        {
+            Info info = Rebuild.ChosenBuild(SelectedPath);
+
+            if (Rebuild.IsProjectBuilt == true)
+            {
+                Message = "Build your project first.";
+            }
+            else
+            {
+                AssembliesPath = info.Assembly;
+                ExeFile = info.Location;
+                ApiAnalyzer analyzer = new ApiAnalyzer();
+                var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
+                // var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
+                // analyzeAssembliesTask.Wait();
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Members = result;
+                    ChooseAssemblies.Add("All Assemblies");
+                    Message = "Analyzing...Done!";
+                });
+            }
+        });
     }
 
     public void AssemblyCollectionUpdate(string assem)
     {
-        Message = "";
+        Message = string.Empty;
         AssemblyCollection.Clear();
         foreach (var r in Members)
         {
-              
-             AssemblyCollection.Add(new ApiViewModel("All Assemblies", r.MemberDocId, false, r.RecommendedChanges));
-                
-            
+            AssemblyCollection.Add(new ApiViewModel("All Assemblies", r.MemberDocId, false, r.RecommendedChanges));
         }
     }
 
     private void ExecuteOpenFileDialog()
     {
-
-        ChooseAssemblies = new HashSet<string>();
-        AssemblyCollection.Clear();
-        SelectedPath = null;
-       // SelectedPlatform = null;
-        Platform = new List<string>();
-        Config = new List<string>();
-        IsEnabled = false;
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
         bool? result = dialog.ShowDialog();
         if (result == true)
         {
+            ResetAnalyzer();
             SelectedPath = dialog.FileName;
         }
         else
@@ -357,6 +362,11 @@ internal class MainViewModel : ViewModelBase
             IsEnabled = false;
         }
 
+        MSAnalyzer();
+    }
+
+    private void MSAnalyzer()
+    {
         MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
         if (SelectedPath != null)
         {
@@ -364,19 +374,38 @@ internal class MainViewModel : ViewModelBase
             if (output != null)
             {
                 if (MsBuildAnalyzer.MessageBox1 == true)
-                {
-                    Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
-              
-                        
 
+                {
+                    IsIconVisible = Visibility.Visible;
+                    Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
                 }
 
                 Config = output.Configuration;
+                if (Config.Count > 0)
+                {
+                    SelectedConfig = Config[0];
+                }
+
                 Platform = output.Platform;
+                if (Platform.Count > 0)
+                {
+                    SelectedPlatform = Platform[0];
+                }
+
                 ExeFile = output.Location;
             }
         }
-        Message = "Analyzing...";
+    }
+
+    private void ResetAnalyzer()
+    {
+        ChooseAssemblies.Clear();
+        AssemblyCollection.Clear();
+        SelectedPath = null;
+        Platform.Clear();
+        Config.Clear();
+        IsEnabled = false;
+        MSAnalyzer();
     }
 
     private void ExecuteSaveFileDialog()
@@ -388,8 +417,8 @@ internal class MainViewModel : ViewModelBase
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {
-            
-            ExportResult exportClass= new ExportResult();
+
+            ExportResult exportClass = new ExportResult();
             exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
         }
     }
