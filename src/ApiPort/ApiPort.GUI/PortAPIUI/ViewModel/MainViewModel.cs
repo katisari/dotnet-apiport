@@ -23,6 +23,9 @@ internal class MainViewModel : ViewModelBase
 
     public IApiPortService Service { get; set; }
 
+    private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
+                    + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
+
     private string _selectedPath;
 
     private List<string> _assemblies;
@@ -312,7 +315,6 @@ internal class MainViewModel : ViewModelBase
 
     private void AnalyzeAPI()
     {
-
         Message = "Analyzing...";
         IsIconVisible = Visibility.Collapsed;
 
@@ -320,13 +322,10 @@ internal class MainViewModel : ViewModelBase
         {
             Info info = Rebuild.ChosenBuild(SelectedPath);
 
-            if (Rebuild.IsProjectBuilt == true)
-
-
+            if (info.Build == false)
             {
-                Message = "Build your project first.";
+                Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
             }
-
             else
             {
                 AssembliesPath = info.Assembly;
@@ -345,32 +344,18 @@ internal class MainViewModel : ViewModelBase
         });
     }
 
-
-public void AssemblyCollectionUpdate(string assem)
-{
-    AssemblyCollection.Clear();
-    foreach (var r in Members)
+    public void AssemblyCollectionUpdate(string assem)
     {
-
         Message = string.Empty;
         AssemblyCollection.Clear();
         foreach (var r in Members)
         {
             AssemblyCollection.Add(new ApiViewModel("All Assemblies", r.MemberDocId, false, r.RecommendedChanges));
-
         }
     }
-}
 
-private void ExecuteOpenFileDialog()
-{
-    var dialog = new Microsoft.Win32.OpenFileDialog();
-    dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
-    dialog.InitialDirectory = @"C:\";
-    bool? result = dialog.ShowDialog();
-    if (result == true)
+    private void ExecuteOpenFileDialog()
     {
-
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
@@ -397,20 +382,27 @@ private void ExecuteOpenFileDialog()
             Info output = msBuild.GetAssemblies(SelectedPath);
             if (output != null)
             {
-                if (MsBuildAnalyzer.MessageBox1 == true)
+                if (output.Package == false)
+                {
+                    Message = "Warning: In order to port to .NET Core," +
+            " NuGet References need to be in PackageReference format." +
+            " For more information go to the Portability Analyzer documentation.";
+                }
 
+                Config = output.Configuration;
+                Platform = output.Platform;
+
+                if (output.Package == true)
                 {
                     IsIconVisible = Visibility.Visible;
                     Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
                 }
 
-                Config = output.Configuration;
                 if (Config.Count > 0)
                 {
                     SelectedConfig = Config[0];
                 }
 
-                Platform = output.Platform;
                 if (Platform.Count > 0)
                 {
                     SelectedPlatform = Platform[0];
@@ -420,7 +412,6 @@ private void ExecuteOpenFileDialog()
             }
         }
     }
-
 
     private void ResetAnalyzer()
     {
@@ -442,9 +433,8 @@ private void ExecuteOpenFileDialog()
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {
-
             ExportResult exportClass = new ExportResult();
             exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
         }
-
+    }
 }
