@@ -332,8 +332,7 @@ internal class MainViewModel : ViewModelBase
                 ExeFile = info.Location;
                 ApiAnalyzer analyzer = new ApiAnalyzer();
                 var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
-                // var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
-                // analyzeAssembliesTask.Wait();
+
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
