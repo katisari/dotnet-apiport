@@ -53,65 +53,60 @@ internal class MainViewModel : ViewModelBase
     public Visibility _isMessageVisible = Visibility.Hidden;
 
 
-    public Visibility _isIconVisible = Visibility.Hidden;
+    public Visibility _IsWarningVisible = Visibility.Hidden;
+    public Visibility _IsErrorVisible = Visibility.Hidden;
+    public Visibility _isCheckVisible = Visibility.Hidden;
 
 
-    private bool _isEnabled = false;
+    private bool _endDateEnabled = false;
 
-    public Visibility IsIconVisible
+    public bool EndDateEnabled
     {
-
-        get { return _isIconVisible; }
+        get { return _endDateEnabled; }
         set
         {
-            _isIconVisible = value;
-            RaisePropertyChanged(nameof(IsIconVisible));
-        }
-
-    }
-
-
-    // private string _image;
-
-    /* public string Image
-     {
-         get
-         {
-             return _image;
-         }
-         set
-         {
-             _image = value;
-             RaisePropertyChanged(nameof(Image));
-         }
-     }
-     public Image IconImage
-     {
-         get
-         {
-             return _iconImage;
-         }
-         set
-         {
-             _iconImage = value;
-             RaisePropertyChanged(nameof(IconImage));
-         }
-     }*/
-
-    public bool IsEnabled
-    {
-        get
-        {
-            return _isEnabled;
-        }
-
-        set
-        {
-            _isEnabled = value;
-            RaisePropertyChanged(nameof(IsEnabled));
+            if (value != _endDateEnabled)
+            {
+                _endDateEnabled = value;
+                RaisePropertyChanged(nameof(EndDateEnabled));
+            }
         }
     }
 
+    public Visibility IsWarningVisible
+    {
+
+        get { return _IsWarningVisible; }
+
+        set
+        {
+            _IsWarningVisible = value;
+            RaisePropertyChanged(nameof(IsWarningVisible));
+        }
+    }
+
+    public Visibility IsErrorVisible
+    {
+
+        get { return _IsErrorVisible; }
+
+        set
+        {
+            _IsErrorVisible = value;
+            RaisePropertyChanged(nameof(IsErrorVisible));
+        }
+    }
+    public Visibility IsCheckVisible
+    {
+
+        get { return _isCheckVisible; }
+
+        set
+        {
+            _isCheckVisible = value;
+            RaisePropertyChanged(nameof(IsCheckVisible));
+        }
+    }
 
     public string Message
     {
@@ -312,9 +307,9 @@ internal class MainViewModel : ViewModelBase
 
     private void AnalyzeAPI()
     {
-
+        EndDateEnabled = false;
         Message = "Analyzing...";
-        IsIconVisible = Visibility.Collapsed;
+        CollapseIcons();
 
         Task.Run(async () =>
         {
@@ -324,6 +319,7 @@ internal class MainViewModel : ViewModelBase
 
 
             {
+                IsErrorVisible = Visibility.Visible;
                 Message = "Build your project first.";
             }
 
@@ -338,39 +334,45 @@ internal class MainViewModel : ViewModelBase
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Members = result;
+                    if (Members.Count != 0)
+                    { 
                     ChooseAssemblies.Add("All Assemblies");
+                    EndDateEnabled = true;
                     Message = "Analyzing...Done!";
+                    }
+                    else
+                    {
+                        Message = "All APIs are compatibile!";
+                        IsCheckVisible = Visibility.Visible;
+                    }
                 });
             }
         });
     }
 
+    public void CollapseIcons()
+    {
+        IsWarningVisible = Visibility.Collapsed;
+     IsErrorVisible = Visibility.Collapsed;
+     IsCheckVisible = Visibility.Collapsed;
+}
 
 public void AssemblyCollectionUpdate(string assem)
 {
-    AssemblyCollection.Clear();
-    foreach (var r in Members)
-    {
-
+  
         Message = string.Empty;
         AssemblyCollection.Clear();
         foreach (var r in Members)
-        {
+        {  
             AssemblyCollection.Add(new ApiViewModel("All Assemblies", r.MemberDocId, false, r.RecommendedChanges));
 
         }
-    }
-}
+  }
 
 private void ExecuteOpenFileDialog()
 {
-    var dialog = new Microsoft.Win32.OpenFileDialog();
-    dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
-    dialog.InitialDirectory = @"C:\";
-    bool? result = dialog.ShowDialog();
-    if (result == true)
-    {
-
+        AssemblyCollection.Clear();
+        EndDateEnabled = false;
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
@@ -383,14 +385,16 @@ private void ExecuteOpenFileDialog()
         else
         {
             SelectedPath = null;
-            IsEnabled = false;
+          
         }
 
         MSAnalyzer();
     }
 
     private void MSAnalyzer()
+
     {
+        CollapseIcons();
         MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
         if (SelectedPath != null)
         {
@@ -400,7 +404,7 @@ private void ExecuteOpenFileDialog()
                 if (MsBuildAnalyzer.MessageBox1 == true)
 
                 {
-                    IsIconVisible = Visibility.Visible;
+                    IsWarningVisible = Visibility.Visible;
                     Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
                 }
 
@@ -425,11 +429,10 @@ private void ExecuteOpenFileDialog()
     private void ResetAnalyzer()
     {
         ChooseAssemblies.Clear();
-        AssemblyCollection.Clear();
         SelectedPath = null;
         Platform.Clear();
+        AssemblyCollection.Clear();
         Config.Clear();
-        IsEnabled = false;
         MSAnalyzer();
     }
 
@@ -446,5 +449,6 @@ private void ExecuteOpenFileDialog()
             ExportResult exportClass = new ExportResult();
             exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
         }
+    }
 
 }
