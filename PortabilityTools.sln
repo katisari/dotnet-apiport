@@ -93,6 +93,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildProj", "src\ApiPort\Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortAPIUI", "src\ApiPort\ApiPort.GUI\PortAPIUI\PortAPIUI.csproj", "{C50E2897-D032-49AF-B283-452E62B287C2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "src\ApiPort\ApiPort.GUI\Shared\Shared.csproj", "{2B75AE69-D0EC-4DF2-80E2-66314C056B46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -199,6 +201,10 @@ Global
 		{C50E2897-D032-49AF-B283-452E62B287C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C50E2897-D032-49AF-B283-452E62B287C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C50E2897-D032-49AF-B283-452E62B287C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B75AE69-D0EC-4DF2-80E2-66314C056B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B75AE69-D0EC-4DF2-80E2-66314C056B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B75AE69-D0EC-4DF2-80E2-66314C056B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B75AE69-D0EC-4DF2-80E2-66314C056B46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -233,6 +239,7 @@ Global
 		{7A3B2571-82C2-4306-ADCB-8B67DBA395BC} = {0D1724F6-078E-4576-9680-6B9334D562DC}
 		{D325BEFC-0712-4D0F-9D8F-B68371382DEF} = {D66AC566-3B80-46F0-8687-3C5F4D203F1A}
 		{C50E2897-D032-49AF-B283-452E62B287C2} = {0D1724F6-078E-4576-9680-6B9334D562DC}
+		{2B75AE69-D0EC-4DF2-80E2-66314C056B46} = {0D1724F6-078E-4576-9680-6B9334D562DC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8E8B2DB2-4847-4909-8631-A995D50F10EF}

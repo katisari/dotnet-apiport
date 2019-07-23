@@ -14,7 +14,7 @@ namespace PortAPIUI
     {
         private static StringBuilder outputConsole = null;
 
-        public static bool MessageBox { get; set; }
+        public static bool IsProjectBuilt { get; set; }
 
         public static Info ChosenBuild(string path)
         {
@@ -50,6 +50,8 @@ namespace PortAPIUI
             if (!string.IsNullOrEmpty(outLine.Data))
             {
                 outputConsole.Append(outLine.Data);
+            }
+        }
             }
         }
     }
