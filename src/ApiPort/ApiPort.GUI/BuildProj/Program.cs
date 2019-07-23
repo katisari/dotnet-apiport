@@ -74,7 +74,7 @@ namespace MSBuildAnalyzer
             using (sw)
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                Info info = new Info(null, Configurations, Platforms, null, null, null, correct);
+                Info info = new Info(false, Configurations, Platforms, null, null, null, correct);
                 serializer.Serialize(writer, info);
                 sw.Close();
                 writer.Close();
