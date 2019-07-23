@@ -42,27 +42,16 @@ namespace PortAPIUI
                 r.Close();
             }
 
-            Message(assemblies);
             return assemblies;
         }
 
-        private static void OutputHandler(object sendingProcess, DataReceivedEventArgs line)
+        private static void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!string.IsNullOrEmpty(line.Data))
+            if (!string.IsNullOrEmpty(outLine.Data))
             {
-                outputConsole.Append(line.Data);
+                outputConsole.Append(outLine.Data);
             }
         }
-
-        public static void Message(Info answer)
-        {
-            if (answer.Build.Equals("False"))
-            {
-                IsProjectBuilt = true;
-            }
-            else
-            {
-                IsProjectBuilt = false;
             }
         }
     }
