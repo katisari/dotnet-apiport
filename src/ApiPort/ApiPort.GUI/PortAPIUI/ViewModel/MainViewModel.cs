@@ -322,13 +322,10 @@ internal class MainViewModel : ViewModelBase
         {
             Info info = Rebuild.ChosenBuild(SelectedPath);
 
-            if (Rebuild.IsProjectBuilt == true)
-
-
+            if (info.Build == false)
             {
                 Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
             }
-
             else
             {
                 AssembliesPath = info.Assembly;
@@ -395,21 +392,18 @@ internal class MainViewModel : ViewModelBase
 
                 Config = output.Configuration;
                 Platform = output.Platform;
-                
-                if (MsBuildAnalyzer.MessageBox1 == true)
 
+                if (output.Package == true)
                 {
                     IsIconVisible = Visibility.Visible;
                     Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
                 }
 
-                Config = output.Configuration;
                 if (Config.Count > 0)
                 {
                     SelectedConfig = Config[0];
                 }
 
-                Platform = output.Platform;
                 if (Platform.Count > 0)
                 {
                     SelectedPlatform = Platform[0];
@@ -419,7 +413,7 @@ internal class MainViewModel : ViewModelBase
             }
         }
     }
-    
+
     private void ResetAnalyzer()
     {
         ChooseAssemblies.Clear();
@@ -440,8 +434,8 @@ internal class MainViewModel : ViewModelBase
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {
-
             ExportResult exportClass = new ExportResult();
             exportClass.ExportApiResult(_selectedPath, Service, savedialog.FileName);
         }
+    }
 }

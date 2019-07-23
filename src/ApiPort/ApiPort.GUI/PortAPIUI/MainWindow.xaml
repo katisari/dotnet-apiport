@@ -67,14 +67,9 @@
 
                 </Grid.ColumnDefinitions>
                 <Image x:Name="Icon" Source="warning_icon.png" Height="16" Visibility="{Binding IsIconVisible}" Grid.Column="0"></Image>
-                <TextBlock  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"   />
+                <TextBox  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  IsInactiveSelectionHighlightEnabled="True" />
             </Grid>
-            
-           
-
-            <Label Content="Incompatibile APIs:"  Padding="0,5,5,5" ></Label>
-
-
+       
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
             <DataGrid IsEnabled="False"  x:Name="APIGrid"  MaxHeight="450" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}"  AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True" >
 

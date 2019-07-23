@@ -30,8 +30,6 @@ namespace PortAPIUI
 
         private Info items;
 
-        public static bool MessageBox1 { get; private set; }
-
         public Info GetAssemblies(string path)
         {
             var ourPath = System.Reflection.Assembly.GetEntryAssembly().Location;
