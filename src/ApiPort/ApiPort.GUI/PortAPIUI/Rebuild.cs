@@ -14,8 +14,6 @@ namespace PortAPIUI
     {
         private static StringBuilder outputConsole = null;
 
-        public static bool IsProjectBuilt { get; set; }
-
         public static Info ChosenBuild(string path)
         {
             var ourPath = System.Reflection.Assembly.GetEntryAssembly().Location;
@@ -50,8 +48,6 @@ namespace PortAPIUI
             if (!string.IsNullOrEmpty(outLine.Data))
             {
                 outputConsole.Append(outLine.Data);
-            }
-        }
             }
         }
     }
