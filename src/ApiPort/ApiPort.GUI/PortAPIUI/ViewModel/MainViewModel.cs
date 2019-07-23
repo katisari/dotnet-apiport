@@ -52,27 +52,22 @@ internal class MainViewModel : ViewModelBase
 
     private string _message;
 
-
     public Visibility _isMessageVisible = Visibility.Hidden;
 
-
     public Visibility _isIconVisible = Visibility.Hidden;
-
 
     private bool _isEnabled = false;
 
     public Visibility IsIconVisible
     {
-
         get { return _isIconVisible; }
+
         set
         {
             _isIconVisible = value;
             RaisePropertyChanged(nameof(IsIconVisible));
         }
-
     }
-
 
     // private string _image;
 
@@ -277,15 +272,12 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-
-
     public Visibility IsMessageVisible
     {
         get
         {
             return _isMessageVisible;
         }
-
 
         set
         {
@@ -303,7 +295,6 @@ internal class MainViewModel : ViewModelBase
         _chooseAssemblies = new ObservableCollection<string>();
         _assembliesPath = new List<string>();
         AssemblyCollection = new ObservableCollection<ApiViewModel>();
-
     }
 
     private void RegisterCommands()
@@ -332,9 +323,9 @@ internal class MainViewModel : ViewModelBase
                 ExeFile = info.Location;
                 ApiAnalyzer analyzer = new ApiAnalyzer();
                 var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
+
                 // var analyzeAssembliesTask = Task.Run<IList<MemberInfo>>(async () => { return await analyzer.AnalyzeAssemblies(ExeFile, Service); });
                 // analyzeAssembliesTask.Wait();
-
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Members = result;
