@@ -89,7 +89,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Fx.Portability.Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiPort.VisualStudio.2019", "src\ApiPort\ApiPort.VisualStudio.2019\ApiPort.VisualStudio.2019.csproj", "{7A3B2571-82C2-4306-ADCB-8B67DBA395BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildcsprojtoMem", "src\ApiPort\ApiPort.GUI\BuildcsprojtoMem\BuildcsprojtoMem.csproj", "{D325BEFC-0712-4D0F-9D8F-B68371382DEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildProj", "src\ApiPort\ApiPort.GUI\BuildProj\BuildProj.csproj", "{D325BEFC-0712-4D0F-9D8F-B68371382DEF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortAPIUI", "src\ApiPort\ApiPort.GUI\PortAPIUI\PortAPIUI.csproj", "{C50E2897-D032-49AF-B283-452E62B287C2}"
 EndProject

@@ -58,6 +58,7 @@
             </StackPanel>
 
 
+
             <Grid x:Name="AssemCompatibility" HorizontalAlignment="Left" VerticalAlignment="Center"   Grid.ColumnSpan="3"  Margin="0,10,0,30" Visibility="{Binding IsMessageVisible}" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -73,6 +74,9 @@
 
             <Label Content="Incompatibile APIs:"  Padding="0,5,5,5" ></Label>
 
+
+
+            <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
             <DataGrid IsEnabled="False"  x:Name="APIGrid"  MaxHeight="450" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}"  AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True" >
 
                 <DataGrid.Columns >

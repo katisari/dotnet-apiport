@@ -75,6 +75,10 @@
     <Resource Include="x.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4-beta1.final" />
+  </ItemGroup>
+
   
 
 </Project>
