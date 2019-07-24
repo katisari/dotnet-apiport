@@ -17,7 +17,7 @@
         Background="White" 
         MinHeight="900" 
         MinWidth="900"
-        Icon=".net_core_icon.png">
+        Icon="BrandDotNet.ico">
     
 
     
@@ -66,8 +66,11 @@
 
 
                 </Grid.ColumnDefinitions>
-                <Image x:Name="Icon" Source="warning_icon.png" Height="16" Visibility="{Binding IsIconVisible}" Grid.Column="0"></Image>
-                <TextBox  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  IsInactiveSelectionHighlightEnabled="True" />
+
+                <Image x:Name="Icon" Source="StatusWarning_16x.png" Height="16" Visibility="{Binding IsIconVisible}" Grid.Column="0"></Image>
+                <TextBlock  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"   />
+
+
             </Grid>
        
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
@@ -90,7 +93,7 @@
                                             <Image MaxWidth="16" MaxHeight="16">
                                                 <Image.Style>
                                                     <Style TargetType="{x:Type Image}">
-                                                        <Setter Property="Source" Value="x.png" />
+                                                        <Setter Property="Source" Value="StatusCriticalError_16x.png "/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=CheckBox}}" Value="True">
                                                                 <Setter Property="Source" Value="check.png" />
