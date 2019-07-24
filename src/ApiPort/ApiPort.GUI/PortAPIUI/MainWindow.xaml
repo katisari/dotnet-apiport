@@ -19,10 +19,8 @@
         MinWidth="900"
         Icon="BrandDotNet.ico">
 
-
-
     <Grid>
-
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -38,52 +36,49 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" Margin="10,10,10,9.84" Grid.ColumnSpan="2" >
+            
             <Label Content= "Path to application folder: "  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="0,5,5,5"  />
             <TextBox   Name="PathTextbox" Text = "{Binding SelectedPath}"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Padding="5"  />
+            
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" >
                 <Label Content="Build configuration: " Width="140" Padding="0,5,5,5"/>
                 <ComboBox Width="165" SelectedIndex="0" SelectedItem="{Binding SelectedConfig}" ItemsSource="{Binding Config}" IsEnabled="{Binding ElementName=PathTextbox,Path=Text.Length}"/>
             </StackPanel>
+            
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" >
                 <Label Content="Build platform: " Width="140" Padding="0,5,5,5"/>
                 <ComboBox x:Name="ComboBox" Width="165" SelectedIndex="0" SelectedItem="{Binding SelectedPlatform}" ItemsSource="{Binding Platform}" IsEnabled="{Binding ElementName=PathTextbox,Path=Text.Length}" />
             </StackPanel>
-
+            
         </StackPanel>
 
         <StackPanel  Grid.Row="2" Grid.Column="0" Orientation="Vertical" Margin="10,10.16,10,10.32" Grid.ColumnSpan="2"  >
+            
             <StackPanel Orientation="Vertical"  Margin="0,10,0,0" >
                 <Label  Content="Assembly: " Padding="0,5,5,5" />
-                <ComboBox  x:Name="AssemComboBox" IsEnabled="{Binding Path=IsEnabled}"  SelectedItem="{Binding SelectedAssembly}" ItemsSource="{Binding ChooseAssemblies}" SelectionChanged="AssemComboBox_SelectionChanged"  />
+                <ComboBox  x:Name="AssemComboBox" IsEnabled="{Binding Path=IsEnabled}" SelectedIndex="0" SelectedItem="{Binding SelectedAssembly}" ItemsSource="{Binding ChooseAssemblies}" SelectionChanged="AssemComboBox_SelectionChanged"  />
             </StackPanel>
-
-            <StackPanel/>
-
-            <Grid x:Name="AssemCompatibility" HorizontalAlignment="Left" VerticalAlignment="Center"   Grid.ColumnSpan="3"  Margin="0,10,0,30" Visibility="{Binding IsMessageVisible}" >
+            
+           
+            <Grid x:Name="AssemCompatibility" HorizontalAlignment="Left" VerticalAlignment="Center"   Grid.ColumnSpan="3"  Margin="10" Visibility="{Binding IsMessageVisible}" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*"/>
-
-
                 </Grid.ColumnDefinitions>
 
                 <Image x:Name="WarningIcon" Source="StatusWarning_16x.png" Height="16" Visibility="{Binding IsWarningVisible}" Grid.Column="0"></Image>
                 <Image x:Name="CheckIcon" Source="check.png" Height="16" Visibility="{Binding IsCheckVisible}" Grid.Column="0"></Image>
                 <Image x:Name="ErrorIcon" Source="StatusCriticalError_16x.png" Height="16" Visibility="{Binding IsErrorVisible}" Grid.Column="0"></Image>
-                <TextBlock  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"   />
+                <TextBlock Padding="10"  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  TextWrapping="Wrap"  />
             </Grid>
 
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
+            
             <DataGrid IsEnabled="{Binding Path=IsEnabled}"  x:Name="APIGrid"  MaxHeight="450" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}"  AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True" >
 
                 <DataGrid.Columns >
-
                     <DataGridTextColumn Header="API" Width="*" Binding="{Binding APIName}" />
-
-
-
                     <DataGridCheckBoxColumn Header="Compatibility" Width="Auto" IsReadOnly="True"  Binding="{Binding Compatibility}">
-
                         <DataGridCheckBoxColumn.ElementStyle>
                             <Style TargetType="{x:Type CheckBox}">
                                 <Setter Property="IsEnabled" Value="False" />
@@ -105,7 +100,6 @@
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
-
                             </Style>
                         </DataGridCheckBoxColumn.ElementStyle>
                     </DataGridCheckBoxColumn>
@@ -115,8 +109,8 @@
 
             <Button x:Name="ExportBtn" Command="{Binding Export}" Content="Export" Width ="75"  Height="23" IsEnabled="{Binding Path=IsEnabled}" HorizontalAlignment="Left" Margin="0,30,0,0"  />
 
-
         </StackPanel>
+        
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Margin="15,15,15,14.84">
             <Button  x:Name="BrowseBtn" Content="Browse..." Command="{Binding Browse}" Margin="0,22,0,0" Width="75" Height="23"    />
             <Button x:Name="AnalzeBtn"  Command="{Binding Analyze}" IsEnabled="{Binding IsAnalyzeEnabled}" Content="Analyze"  Margin="0,12,0,0"  Height="23" HorizontalAlignment="Stretch" Width="75"   />
@@ -127,10 +121,9 @@
         </TextBlock>
 
         <Separator Grid.Row="4"  Grid.ColumnSpan="3"  VerticalAlignment="Top" Margin="0,1.68,0,0" />
-        <Grid Grid.Row="4" Grid.ColumnSpan="3" Margin="10,9.68,10,10.04">
 
-            <TextBlock TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                
+        <Grid Grid.Row="4" Grid.ColumnSpan="3" Margin="10,9.68,10,10.04">
+            <TextBlock TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >              
                 <Run  Text= "Privacy &#x0a;The analyzer will send anonymous API usage information to microsoft to help us improve .NET Core.
                     &#x0a; his way, we know which APIs are often used by customers who wish to target .NET Core. We won't submit any of your binaries or source code to Microsoft.
                     &#x0a;For our full privacy statement visit: " >  </Run>

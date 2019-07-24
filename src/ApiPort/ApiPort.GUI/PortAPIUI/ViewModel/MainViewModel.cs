@@ -15,17 +15,6 @@ using System.Windows;
 
 internal class MainViewModel : ViewModelBase
 {
-    public RelayCommand Browse { get; set; }
-
-    public RelayCommand Export { get; set; }
-
-    public RelayCommand Analyze { get; set; }
-
-    public IApiPortService Service { get; set; }
-
-    private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
-                    + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
-
     private string _selectedPath;
 
     private List<string> _assemblies;
@@ -34,11 +23,36 @@ internal class MainViewModel : ViewModelBase
 
     private ObservableCollection<string> _chooseAssemblies;
 
+    private string _message;
+
+    private bool _isAnalyzeEnabled;
+
+    private Visibility _isMessageVisible = Visibility.Hidden;
+
+    private Visibility _isWarningVisible = Visibility.Collapsed;
+
+    private Visibility _isErrorVisible = Visibility.Collapsed;
+
+    private Visibility _isCheckVisible = Visibility.Collapsed;
+
+    private bool _isEnabled = false;
+
+    private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
+                    + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
+
     public List<string> _config;
 
-    public static List<string> _platform;
+    public RelayCommand Browse { get; set; }
 
-    public static string ExeFile;
+    public RelayCommand Export { get; set; }
+
+    public RelayCommand Analyze { get; set; }
+
+    public IApiPortService Service { get; set; }
+
+    public List<string> _platform;
+
+    public string ExeFile;
 
     public static string _selectedConfig;
 
@@ -50,14 +64,13 @@ internal class MainViewModel : ViewModelBase
 
     public IList<MemberInfo> _members;
 
-    private string _message;
-
     public bool IsAnalyzeEnabled
     {
         get
         {
             return _isAnalyzeEnabled;
         }
+
         set
         {
             _isAnalyzeEnabled = value;
@@ -65,21 +78,10 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-    private bool _isAnalyzeEnabled;
-
-    public Visibility _isMessageVisible = Visibility.Hidden;
-
-
-    public Visibility _IsWarningVisible = Visibility.Hidden;
-    public Visibility _IsErrorVisible = Visibility.Hidden;
-    public Visibility _isCheckVisible = Visibility.Hidden;
-
-
-    private bool _isEnabled = false;
-
     public bool IsEnabled
     {
-        get { return _isEnabled; }
+        get => _isEnabled;
+
         set
         {
             if (value != _isEnabled)
@@ -92,12 +94,11 @@ internal class MainViewModel : ViewModelBase
 
     public Visibility IsWarningVisible
     {
-
-        get { return _IsWarningVisible; }
+        get => _isWarningVisible;
 
         set
         {
-            _IsWarningVisible = value;
+            _isWarningVisible = value;
             RaisePropertyChanged(nameof(IsWarningVisible));
         }
     }
@@ -105,18 +106,19 @@ internal class MainViewModel : ViewModelBase
     public Visibility IsErrorVisible
     {
 
-        get { return _IsErrorVisible; }
+        get => _isErrorVisible;
 
         set
         {
-            _IsErrorVisible = value;
+            _isErrorVisible = value;
             RaisePropertyChanged(nameof(IsErrorVisible));
         }
     }
+
     public Visibility IsCheckVisible
     {
 
-        get { return _isCheckVisible; }
+        get => _isCheckVisible;
 
         set
         {
@@ -286,8 +288,6 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-
-
     public Visibility IsMessageVisible
     {
         get
@@ -329,46 +329,44 @@ internal class MainViewModel : ViewModelBase
         Message = "Analyzing...";
         CollapseIcons();
 
-        Task.Run(async () =>
-        {
-            Info info = Rebuild.ChosenBuild(SelectedPath);
+        _ = Task.Run(async () =>
+          {
+              Info info = Rebuild.ChosenBuild(SelectedPath);
 
-            if (info.Build == false)
-            {
+              if (info.Build == false)
+              {
 
-                IsErrorVisible = Visibility.Visible;
-                Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
+                  IsErrorVisible = Visibility.Visible;
+                  Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
 
-            }
-            else
-            {
-                AssembliesPath = info.Assembly;
-                ExeFile = info.Location;
-                ApiAnalyzer analyzer = new ApiAnalyzer();
-                var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
+              }
+              else
+              {
+                  AssembliesPath = info.Assembly;
+                  ExeFile = info.Location;
+                  ApiAnalyzer analyzer = new ApiAnalyzer();
+                  var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
 
+                  Application.Current.Dispatcher.Invoke(() =>
+                  {
+                      Members = result;
+                      if (Members.Count != 0)
+                      {
+                          IsAnalyzeEnabled = true;
+                          ChooseAssemblies.Add("All Assemblies");
+                          IsEnabled = true;
+                          Message = "Analyzing...Done!";
+                      }
+                      else
+                      {
+                          IsCheckVisible = Visibility.Visible;
+                          Message = "All APIs are compatibile!";
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Members = result;
-                    if (Members.Count != 0)
-                    {
-                        IsAnalyzeEnabled = true;
-                        ChooseAssemblies.Add("All Assemblies");
-                        IsEnabled = true;
-                        Message = "Analyzing...Done!";
-                    }
-                    else
-                    {
-                        IsCheckVisible = Visibility.Visible;
-                        Message = "All APIs are compatibile!";
-
-                    }
-                });
-            }
-        });
+                      }
+                  });
+              }
+          });
     }
-
 
     public void CollapseIcons()
     {
@@ -389,7 +387,6 @@ internal class MainViewModel : ViewModelBase
 
     private void ExecuteOpenFileDialog()
     {
-
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
@@ -403,11 +400,9 @@ internal class MainViewModel : ViewModelBase
         }
 
         IsAnalyzeEnabled = string.IsNullOrWhiteSpace(SelectedPath) ? false : true;
-
     }
 
     private void MSAnalyzer()
-
     {
         CollapseIcons();
         MsBuildAnalyzer msBuild = new MsBuildAnalyzer();

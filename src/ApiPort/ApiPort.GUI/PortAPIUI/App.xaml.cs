@@ -15,14 +15,17 @@ namespace PortAPIUI
     {
         public App()
         {
-            Container = SetUp();
+            Container = SetUp;
         }
 
-        public IContainer SetUp()
+        public IContainer SetUp
         {
-            var productInformation = new ProductInformation("ApiPort_Console");
-            var container = DependencyBuilder.Build(productInformation);
-            return container;
+            get
+            {
+                var productInformation = new ProductInformation("ApiPort_Console");
+                var container = DependencyBuilder.Build(productInformation);
+                return container;
+            }
         }
 
         private static IContainer Container { get; set; }
