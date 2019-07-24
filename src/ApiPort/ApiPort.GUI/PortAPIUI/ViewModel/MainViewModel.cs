@@ -52,7 +52,8 @@ internal class MainViewModel : ViewModelBase
 
     private string _message;
 
-    public bool IsAnalyzeEnabled {
+    public bool IsAnalyzeEnabled
+    {
         get
         {
             return _isAnalyzeEnabled;
@@ -388,7 +389,7 @@ internal class MainViewModel : ViewModelBase
 
     private void ExecuteOpenFileDialog()
     {
-        
+
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
@@ -401,7 +402,7 @@ internal class MainViewModel : ViewModelBase
             MSAnalyzer();
         }
 
-            IsAnalyzeEnabled = string.IsNullOrWhiteSpace(SelectedPath) ? false : true ;
+        IsAnalyzeEnabled = string.IsNullOrWhiteSpace(SelectedPath) ? false : true;
 
     }
 
