@@ -52,69 +52,78 @@ internal class MainViewModel : ViewModelBase
 
     private string _message;
 
+    public bool IsAnalyzeEnabled
+    {
+        get
+        {
+            return _isAnalyzeEnabled;
+        }
+        set
+        {
+            _isAnalyzeEnabled = value;
+            RaisePropertyChanged(nameof(IsAnalyzeEnabled));
+        }
+    }
+
+    private bool _isAnalyzeEnabled;
 
     public Visibility _isMessageVisible = Visibility.Hidden;
 
 
-    public Visibility _isIconVisible = Visibility.Hidden;
+    public Visibility _IsWarningVisible = Visibility.Hidden;
+    public Visibility _IsErrorVisible = Visibility.Hidden;
+    public Visibility _isCheckVisible = Visibility.Hidden;
 
 
     private bool _isEnabled = false;
 
-    public Visibility IsIconVisible
-    {
-
-        get { return _isIconVisible; }
-        set
-        {
-            _isIconVisible = value;
-            RaisePropertyChanged(nameof(IsIconVisible));
-        }
-
-    }
-
-
-    // private string _image;
-
-    /* public string Image
-     {
-         get
-         {
-             return _image;
-         }
-         set
-         {
-             _image = value;
-             RaisePropertyChanged(nameof(Image));
-         }
-     }
-     public Image IconImage
-     {
-         get
-         {
-             return _iconImage;
-         }
-         set
-         {
-             _iconImage = value;
-             RaisePropertyChanged(nameof(IconImage));
-         }
-     }*/
-
     public bool IsEnabled
     {
-        get
-        {
-            return _isEnabled;
-        }
-
+        get { return _isEnabled; }
         set
         {
-            _isEnabled = value;
-            RaisePropertyChanged(nameof(IsEnabled));
+            if (value != _isEnabled)
+            {
+                _isEnabled = value;
+                RaisePropertyChanged(nameof(IsEnabled));
+            }
         }
     }
 
+    public Visibility IsWarningVisible
+    {
+
+        get { return _IsWarningVisible; }
+
+        set
+        {
+            _IsWarningVisible = value;
+            RaisePropertyChanged(nameof(IsWarningVisible));
+        }
+    }
+
+    public Visibility IsErrorVisible
+    {
+
+        get { return _IsErrorVisible; }
+
+        set
+        {
+            _IsErrorVisible = value;
+            RaisePropertyChanged(nameof(IsErrorVisible));
+        }
+    }
+    public Visibility IsCheckVisible
+    {
+
+        get { return _isCheckVisible; }
+
+        set
+        {
+            _isCheckVisible = value;
+            RaisePropertyChanged(nameof(IsCheckVisible));
+        }
+    }
 
     public string Message
     {
@@ -315,8 +324,10 @@ internal class MainViewModel : ViewModelBase
 
     private void AnalyzeAPI()
     {
+
+        IsAnalyzeEnabled = false;
         Message = "Analyzing...";
-        IsIconVisible = Visibility.Collapsed;
+        CollapseIcons();
 
         Task.Run(async () =>
         {
@@ -324,7 +335,10 @@ internal class MainViewModel : ViewModelBase
 
             if (info.Build == false)
             {
+
+                IsErrorVisible = Visibility.Visible;
                 Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
+
             }
             else
             {
@@ -337,11 +351,30 @@ internal class MainViewModel : ViewModelBase
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Members = result;
-                    ChooseAssemblies.Add("All Assemblies");
-                    Message = "Analyzing...Done!";
+                    if (Members.Count != 0)
+                    {
+                        IsAnalyzeEnabled = true;
+                        ChooseAssemblies.Add("All Assemblies");
+                        IsEnabled = true;
+                        Message = "Analyzing...Done!";
+                    }
+                    else
+                    {
+                        IsCheckVisible = Visibility.Visible;
+                        Message = "All APIs are compatibile!";
+
+                    }
                 });
             }
         });
+    }
+
+
+    public void CollapseIcons()
+    {
+        IsWarningVisible = Visibility.Collapsed;
+        IsErrorVisible = Visibility.Collapsed;
+        IsCheckVisible = Visibility.Collapsed;
     }
 
     public void AssemblyCollectionUpdate(string assem)
@@ -356,45 +389,39 @@ internal class MainViewModel : ViewModelBase
 
     private void ExecuteOpenFileDialog()
     {
+
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
         bool? result = dialog.ShowDialog();
         if (result == true)
         {
+            IsEnabled = false;
             ResetAnalyzer();
             SelectedPath = dialog.FileName;
-        }
-        else
-        {
-            SelectedPath = null;
-            IsEnabled = false;
+            MSAnalyzer();
         }
 
-        MSAnalyzer();
+        IsAnalyzeEnabled = string.IsNullOrWhiteSpace(SelectedPath) ? false : true;
+
     }
 
     private void MSAnalyzer()
+
     {
+        CollapseIcons();
         MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
         if (SelectedPath != null)
         {
             Info output = msBuild.GetAssemblies(SelectedPath);
             if (output != null)
             {
-                if (output.Package == false)
-                {
-                    Message = "Warning: In order to port to .NET Core," +
-            " NuGet References need to be in PackageReference format." +
-            " For more information go to the Portability Analyzer documentation.";
-                }
-
                 Config = output.Configuration;
                 Platform = output.Platform;
 
-                if (output.Package == true)
+                if (output.Package == false)
                 {
-                    IsIconVisible = Visibility.Visible;
+                    IsWarningVisible = Visibility.Visible;
                     Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
                 }
 
@@ -416,11 +443,10 @@ internal class MainViewModel : ViewModelBase
     private void ResetAnalyzer()
     {
         ChooseAssemblies.Clear();
-        AssemblyCollection.Clear();
         SelectedPath = null;
         Platform.Clear();
+        AssemblyCollection.Clear();
         Config.Clear();
-        IsEnabled = false;
         MSAnalyzer();
     }
 
