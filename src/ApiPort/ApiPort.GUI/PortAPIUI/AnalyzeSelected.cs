@@ -10,7 +10,7 @@ using System.Text;
 
 namespace PortAPIUI
 {
-    public static class Rebuild
+    public static class AnalyzeSelected
     {
         private static StringBuilder outputConsole = null;
 
@@ -32,15 +32,14 @@ namespace PortAPIUI
             process.BeginOutputReadLine();
             process.WaitForExit();
             process.Close();
-            Info assemblies;
+            Info output;
             using (StreamReader r = new StreamReader(json1Path))
             {
                 string json = r.ReadToEnd();
-                assemblies = JsonConvert.DeserializeObject<Info>(json);
-                r.Close();
+                output = JsonConvert.DeserializeObject<Info>(json);
             }
 
-            return assemblies;
+            return output;
         }
 
         private static void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)

@@ -39,6 +39,14 @@ namespace PortAPIUI
             Process.Start(psi);
         }
 
+        // Enables export button, and table wehn analyze button is clicked
+        private void BStart_Click(object sender, RoutedEventArgs e)
+        {
+            ExportBtn.IsEnabled = true;
+            APIGrid.IsEnabled = true;
+            AssemComboBox.IsEnabled = true;
+        }
+
         // Removes IsInDesignMode Column from datagrid
         private void OnAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
@@ -53,14 +61,12 @@ namespace PortAPIUI
         // Populates datagrid based on selected assembly
         private void AssemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             var vm = this.DataContext as MainViewModel;
             string assem = "All Assemblies";
             if (assem != null)
             {
                 vm.AssemblyCollectionUpdate(assem);
             }
-
         }
     }
 }
