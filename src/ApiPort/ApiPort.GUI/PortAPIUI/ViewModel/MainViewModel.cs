@@ -450,7 +450,7 @@ internal class MainViewModel : ViewModelBase
         var savedialog = new Microsoft.Win32.SaveFileDialog();
         savedialog.FileName = "PortablityAnalysisReport";
         savedialog.DefaultExt = ".text";
-        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
+        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Excel (*.xlsx)|*.xlsx|Csv (*.csv)|*.csv";
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {
