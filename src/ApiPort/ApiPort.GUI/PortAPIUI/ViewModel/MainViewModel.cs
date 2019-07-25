@@ -333,10 +333,8 @@ internal class MainViewModel : ViewModelBase
 
               if (info.Build == false)
               {
-
                   IsErrorVisible = Visibility.Visible;
                   Message = string.Format(format, SelectedPath, SelectedConfig, SelectedPlatform);
-
               }
               else
               {
@@ -359,7 +357,6 @@ internal class MainViewModel : ViewModelBase
                       {
                           IsCheckVisible = Visibility.Visible;
                           Message = "All APIs are compatible!";
-
                       }
                   });
               }
