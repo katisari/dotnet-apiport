@@ -8,6 +8,7 @@ using Microsoft.Fx.Portability.ObjectModel;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -15,23 +16,33 @@ using System.Windows;
 
 internal class MainViewModel : ViewModelBase
 {
-    public RelayCommand Browse { get; set; }
+    private string _selectedPath;
 
-    public RelayCommand Export { get; set; }
+    private List<string> _assemblies;
 
-    public RelayCommand Analyze { get; set; }
+    private List<string> _assembliesPath;
 
-    public IApiPortService Service { get; set; }
+    private ObservableCollection<string> _chooseAssemblies;
+
+    private string _message;
+
+    private bool _isAnalyzeEnabled;
+
+    private Visibility _isMessageVisible = Visibility.Hidden;
+
+    private Visibility _isWarningVisible = Visibility.Collapsed;
+
+    private Visibility _isErrorVisible = Visibility.Collapsed;
+
+    private Visibility _isCheckVisible = Visibility.Collapsed;
+
+    private bool _isEnabled = false;
 
     public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
 
-    private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
+    private string format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
                     + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
 
-    private static string _selectedPath;
-    private static List<string> _assemblies;
-    private static List<string> _assembliesPath;
-    private ObservableCollection<string> _chooseAssemblies;
     private static List<string> _config;
     private static List<string> _platform;
     private static string exeFile;
@@ -39,14 +50,14 @@ internal class MainViewModel : ViewModelBase
     public static string _selectedPlatform;
     private static string _selectedAssembly;
     private static IList<MemberInfo> _members;
-    private static string _message;
-    private bool _isAnalyzeEnabled;
-    private Visibility _isWarningVisible = Visibility.Hidden;
-    private Visibility _isErrorVisible = Visibility.Hidden;
-    private Visibility _isCheckVisible = Visibility.Hidden;
-    private bool _isEnabled = false;
-    private Visibility _isMessageVisible = Visibility.Hidden;
-    private Visibility _isIconVisible = Visibility.Hidden;
+
+    public RelayCommand Browse { get; set; }
+
+    public RelayCommand Export { get; set; }
+
+    public RelayCommand Analyze { get; set; }
+
+    public IApiPortService Service { get; set; }
 
     public bool IsAnalyzeEnabled
     {
@@ -64,10 +75,7 @@ internal class MainViewModel : ViewModelBase
 
     public bool IsEnabled
     {
-        get
-        {
-            return _isEnabled;
-        }
+        get => _isEnabled;
 
         set
         {
@@ -81,10 +89,7 @@ internal class MainViewModel : ViewModelBase
 
     public Visibility IsWarningVisible
     {
-        get
-        {
-            return _isWarningVisible;
-        }
+        get => _isWarningVisible;
 
         set
         {
@@ -95,10 +100,7 @@ internal class MainViewModel : ViewModelBase
 
     public Visibility IsErrorVisible
     {
-        get
-        {
-            return _isErrorVisible;
-        }
+        get => _isErrorVisible;
 
         set
         {
@@ -109,10 +111,7 @@ internal class MainViewModel : ViewModelBase
 
     public Visibility IsCheckVisible
     {
-        get
-        {
-            return _isCheckVisible;
-        }
+        get => _isCheckVisible;
 
         set
         {
@@ -325,43 +324,46 @@ internal class MainViewModel : ViewModelBase
 
     private void AnalyzeAPI()
     {
-
         IsAnalyzeEnabled = false;
         Message = "Analyzing...";
         CollapseIcons();
+        _ = Task.Run(async () =>
+          {
+              Info info = AnalyzeSelected.ChosenBuild(SelectedPath);
 
-        Task.Run(async () =>
-        {
-            Info info = PortAPIUI.Analyze.ChosenBuild(SelectedPath);
-            if (info.Build == false)
-            {
-                IsErrorVisible = Visibility.Visible;
-                Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
-            }
-            else
-            {
-                AssembliesPath = info.Assembly;
-                exeFile = info.Location;
-                ApiAnalyzer analyzer = new ApiAnalyzer();
-                var result = await analyzer.AnalyzeAssemblies(exeFile, Service);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Members = result;
-                    if (Members.Count != 0)
-                    {
-                        IsAnalyzeEnabled = true;
-                        ChooseAssemblies.Add("All Assemblies");
-                        IsEnabled = true;
-                        Message = "Analyzing...Done!";
-                    }
-                    else
-                    {
-                        IsCheckVisible = Visibility.Visible;
-                        Message = "All APIs are compatibile!";
-                    }
-                });
-            }
-        });
+              if (info.Build == false)
+              {
+
+                  IsErrorVisible = Visibility.Visible;
+                  Message = string.Format(format, SelectedPath, SelectedConfig, SelectedPlatform);
+
+              }
+              else
+              {
+                  AssembliesPath = info.Assembly;
+                  exeFile = info.Location;
+                  ApiAnalyzer analyzer = new ApiAnalyzer();
+                  var result = await analyzer.AnalyzeAssemblies(exeFile, Service);
+
+                  Application.Current.Dispatcher.Invoke(() =>
+                  {
+                      Members = result;
+                      if (Members.Count != 0)
+                      {
+                          IsAnalyzeEnabled = true;
+                          ChooseAssemblies.Add("All Assemblies");
+                          IsEnabled = true;
+                          Message = "Analyzing...Done!";
+                      }
+                      else
+                      {
+                          IsCheckVisible = Visibility.Visible;
+                          Message = "All APIs are compatible!";
+
+                      }
+                  });
+              }
+          });
     }
 
     public void CollapseIcons()
@@ -383,7 +385,6 @@ internal class MainViewModel : ViewModelBase
 
     private void ExecuteOpenFileDialog()
     {
-
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
@@ -397,7 +398,6 @@ internal class MainViewModel : ViewModelBase
         }
 
         IsAnalyzeEnabled = string.IsNullOrWhiteSpace(SelectedPath) ? false : true;
-
     }
 
     private void MSAnalyzer()

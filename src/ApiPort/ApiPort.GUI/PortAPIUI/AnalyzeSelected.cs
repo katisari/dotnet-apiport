@@ -10,7 +10,7 @@ using System.Text;
 
 namespace PortAPIUI
 {
-    public static class Analyze
+    public static class AnalyzeSelected
     {
         private static StringBuilder outputConsole = null;
 
