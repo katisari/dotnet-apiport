@@ -42,20 +42,12 @@ namespace MSBuildAnalyzer
 
         private static List<string> platforms;
 
-        public static List<string> Configurations { get => configurations; set => configurations = value; }
-
-        public static List<string> Platforms { get => platforms; set => platforms = value; }
-
-        public static StringBuilder Output;
-
         public static void BuildIt(string csProjPath, string jsonPath)
         {
             ProjectCollection pc = new ProjectCollection(null, null, ToolsetDefinitionLocations.Default);
             var project = pc.LoadProject(csProjPath);
             bool correct = false;
             var projectItems = project.Items;
-            List<string> packInfo = new List<string>();
-            List<FrameworkName> packInfo1 = new List<FrameworkName>();
             foreach (var count in projectItems)
             {
                 if (count.ItemType.Equals("PackageReference"))
@@ -65,8 +57,8 @@ namespace MSBuildAnalyzer
             }
 
             System.IO.File.WriteAllText(jsonPath, string.Empty);
-            Configurations = project.ConditionedProperties["Configuration"];
-            Platforms = project.ConditionedProperties["Platform"];
+            configurations = project.ConditionedProperties["Configuration"];
+            platforms = project.ConditionedProperties["Platform"];
             JsonSerializer serializer = new JsonSerializer();
             StreamWriter sw = new StreamWriter(jsonPath, false);
             serializer.Converters.Add(new JavaScriptDateTimeConverter());
@@ -74,7 +66,7 @@ namespace MSBuildAnalyzer
             using (sw)
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                Info info = new Info(false, Configurations, Platforms, null, null, null, correct);
+                Info info = new Info(false, configurations, platforms, null, null, null, correct);
                 serializer.Serialize(writer, info);
                 sw.Close();
                 writer.Close();

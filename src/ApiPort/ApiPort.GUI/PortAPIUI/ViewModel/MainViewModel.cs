@@ -8,6 +8,7 @@ using Microsoft.Fx.Portability.ObjectModel;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -36,11 +37,19 @@ internal class MainViewModel : ViewModelBase
     private Visibility _isCheckVisible = Visibility.Collapsed;
 
     private bool _isEnabled = false;
+    public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
 
     private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
                     + "\n" + "msbuild.exe {0}  /p:Configuration=\"{1}\" /p:Platform=\"{2}\"";
 
-    public List<string> _config;
+
+    private static List<string> _config;
+    private static List<string> _platform;
+    private static string exeFile;
+    public static string _selectedConfig;
+    public static string _selectedPlatform;
+    private static string _selectedAssembly;
+    private static IList<MemberInfo> _members;
 
     public RelayCommand Browse { get; set; }
 
@@ -49,20 +58,6 @@ internal class MainViewModel : ViewModelBase
     public RelayCommand Analyze { get; set; }
 
     public IApiPortService Service { get; set; }
-
-    public List<string> _platform;
-
-    public string ExeFile;
-
-    public static string _selectedConfig;
-
-    public static string _selectedPlatform;
-
-    public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
-
-    public string _selectedAssembly;
-
-    public IList<MemberInfo> _members;
 
     public bool IsAnalyzeEnabled
     {
@@ -105,7 +100,6 @@ internal class MainViewModel : ViewModelBase
 
     public Visibility IsErrorVisible
     {
-
         get => _isErrorVisible;
 
         set
@@ -117,7 +111,6 @@ internal class MainViewModel : ViewModelBase
 
     public Visibility IsCheckVisible
     {
-
         get => _isCheckVisible;
 
         set
@@ -204,7 +197,10 @@ internal class MainViewModel : ViewModelBase
 
     public List<string> Platform
     {
-        get { return _platform; }
+        get
+        {
+            return _platform;
+        }
 
         set
         {
@@ -229,7 +225,10 @@ internal class MainViewModel : ViewModelBase
 
     public List<string> AssembliesPath
     {
-        get { return _assembliesPath; }
+        get
+        {
+            return _assembliesPath;
+        }
 
         set
         {
@@ -240,7 +239,10 @@ internal class MainViewModel : ViewModelBase
 
     public ObservableCollection<string> ChooseAssemblies
     {
-        get { return _chooseAssemblies; }
+        get
+        {
+            return _chooseAssemblies;
+        }
 
         set
         {
@@ -295,7 +297,6 @@ internal class MainViewModel : ViewModelBase
             return _isMessageVisible;
         }
 
-
         set
         {
             _isMessageVisible = value;
@@ -312,7 +313,6 @@ internal class MainViewModel : ViewModelBase
         _chooseAssemblies = new ObservableCollection<string>();
         _assembliesPath = new List<string>();
         AssemblyCollection = new ObservableCollection<ApiViewModel>();
-
     }
 
     private void RegisterCommands()
@@ -324,28 +324,24 @@ internal class MainViewModel : ViewModelBase
 
     private void AnalyzeAPI()
     {
-
         IsAnalyzeEnabled = false;
         Message = "Analyzing...";
         CollapseIcons();
-
         _ = Task.Run(async () =>
           {
-              Info info = Rebuild.ChosenBuild(SelectedPath);
+              Info info = AnalyzeSelected.ChosenBuild(SelectedPath);
 
               if (info.Build == false)
               {
-
                   IsErrorVisible = Visibility.Visible;
-                  Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
-
+                  Message = string.Format(format, SelectedPath, SelectedConfig, SelectedPlatform);
               }
               else
               {
                   AssembliesPath = info.Assembly;
-                  ExeFile = info.Location;
+                  exeFile = info.Location;
                   ApiAnalyzer analyzer = new ApiAnalyzer();
-                  var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
+                  var result = await analyzer.AnalyzeAssemblies(exeFile, Service);
 
                   Application.Current.Dispatcher.Invoke(() =>
                   {
@@ -360,8 +356,7 @@ internal class MainViewModel : ViewModelBase
                       else
                       {
                           IsCheckVisible = Visibility.Visible;
-                          Message = "All APIs are compatibile!";
-
+                          Message = "All APIs are compatible!";
                       }
                   });
               }
@@ -430,7 +425,7 @@ internal class MainViewModel : ViewModelBase
                     SelectedPlatform = Platform[0];
                 }
 
-                ExeFile = output.Location;
+                exeFile = output.Location;
             }
         }
     }
