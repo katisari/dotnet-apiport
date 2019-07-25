@@ -61,14 +61,12 @@ namespace PortAPIUI
         // Populates datagrid based on selected assembly
         private void AssemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             var vm = this.DataContext as MainViewModel;
             string assem = "All Assemblies";
             if (assem != null)
             {
                 vm.AssemblyCollectionUpdate(assem);
             }
-
         }
     }
 }

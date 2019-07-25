@@ -33,4 +33,4 @@ If your project is not built, an error warning will pop up to remind you to buil
 
 ### Summary
 
-Please download the .zip file and use the Portability Analyzer .exe on your desktop applications. It will help you determine how compatible your apps are with .NET Core 3.0.
+Please download the PortabilityAnalyzer.zip file and extract all the files. Then, open the Publish folder and run the PortAPIUI.exe. It will help you determine how compatible your apps are with .NET Core 3.0.

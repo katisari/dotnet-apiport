@@ -23,78 +23,44 @@ internal class MainViewModel : ViewModelBase
 
     public IApiPortService Service { get; set; }
 
+    public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
+
     private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
                     + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
 
-    private string _selectedPath;
-
-    private List<string> _assemblies;
-
-    private List<string> _assembliesPath;
-
+    private static string _selectedPath;
+    private static List<string> _assemblies;
+    private static List<string> _assembliesPath;
     private ObservableCollection<string> _chooseAssemblies;
-
-    public List<string> _config;
-
-    public static List<string> _platform;
-
-    public static string ExeFile;
-
+    private static List<string> _config;
+    private static List<string> _platform;
+    private static string exeFile;
     public static string _selectedConfig;
-
     public static string _selectedPlatform;
-
-    public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
-
-    public string _selectedAssembly;
-
-    public IList<MemberInfo> _members;
-
-    private string _message;
-
-    public Visibility _isMessageVisible = Visibility.Hidden;
-
-    public Visibility _isIconVisible = Visibility.Hidden;
-
+    private static string _selectedAssembly;
+    private static IList<MemberInfo> _members;
+    private static string _message;
+    private bool _isAnalyzeEnabled;
+    private Visibility _isWarningVisible = Visibility.Hidden;
+    private Visibility _isErrorVisible = Visibility.Hidden;
+    private Visibility _isCheckVisible = Visibility.Hidden;
     private bool _isEnabled = false;
+    private Visibility _isMessageVisible = Visibility.Hidden;
+    private Visibility _isIconVisible = Visibility.Hidden;
 
-    public Visibility IsIconVisible
+    public bool IsAnalyzeEnabled
     {
-        get { return _isIconVisible; }
+        get
+        {
+            return _isAnalyzeEnabled;
+        }
 
         set
         {
-            _isIconVisible = value;
-            RaisePropertyChanged(nameof(IsIconVisible));
+            _isAnalyzeEnabled = value;
+            RaisePropertyChanged(nameof(IsAnalyzeEnabled));
         }
     }
-
-    // private string _image;
-
-    /* public string Image
-     {
-         get
-         {
-             return _image;
-         }
-         set
-         {
-             _image = value;
-             RaisePropertyChanged(nameof(Image));
-         }
-     }
-     public Image IconImage
-     {
-         get
-         {
-             return _iconImage;
-         }
-         set
-         {
-             _iconImage = value;
-             RaisePropertyChanged(nameof(IconImage));
-         }
-     }*/
 
     public bool IsEnabled
     {
@@ -105,11 +71,55 @@ internal class MainViewModel : ViewModelBase
 
         set
         {
-            _isEnabled = value;
-            RaisePropertyChanged(nameof(IsEnabled));
+            if (value != _isEnabled)
+            {
+                _isEnabled = value;
+                RaisePropertyChanged(nameof(IsEnabled));
+            }
         }
     }
 
+    public Visibility IsWarningVisible
+    {
+        get
+        {
+            return _isWarningVisible;
+        }
+
+        set
+        {
+            _isWarningVisible = value;
+            RaisePropertyChanged(nameof(IsWarningVisible));
+        }
+    }
+
+    public Visibility IsErrorVisible
+    {
+        get
+        {
+            return _isErrorVisible;
+        }
+
+        set
+        {
+            _isErrorVisible = value;
+            RaisePropertyChanged(nameof(IsErrorVisible));
+        }
+    }
+
+    public Visibility IsCheckVisible
+    {
+        get
+        {
+            return _isCheckVisible;
+        }
+
+        set
+        {
+            _isCheckVisible = value;
+            RaisePropertyChanged(nameof(IsCheckVisible));
+        }
+    }
 
     public string Message
     {
@@ -188,7 +198,10 @@ internal class MainViewModel : ViewModelBase
 
     public List<string> Platform
     {
-        get { return _platform; }
+        get
+        {
+            return _platform;
+        }
 
         set
         {
@@ -213,7 +226,10 @@ internal class MainViewModel : ViewModelBase
 
     public List<string> AssembliesPath
     {
-        get { return _assembliesPath; }
+        get
+        {
+            return _assembliesPath;
+        }
 
         set
         {
@@ -224,7 +240,10 @@ internal class MainViewModel : ViewModelBase
 
     public ObservableCollection<string> ChooseAssemblies
     {
-        get { return _chooseAssemblies; }
+        get
+        {
+            return _chooseAssemblies;
+        }
 
         set
         {
@@ -306,31 +325,50 @@ internal class MainViewModel : ViewModelBase
 
     private void AnalyzeAPI()
     {
+
+        IsAnalyzeEnabled = false;
         Message = "Analyzing...";
-        IsIconVisible = Visibility.Collapsed;
+        CollapseIcons();
 
         Task.Run(async () =>
         {
             Info info = PortAPIUI.Analyze.ChosenBuild(SelectedPath);
-
             if (info.Build == false)
             {
+                IsErrorVisible = Visibility.Visible;
                 Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
             }
             else
             {
                 AssembliesPath = info.Assembly;
-                ExeFile = info.Location;
+                exeFile = info.Location;
                 ApiAnalyzer analyzer = new ApiAnalyzer();
-                var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
+                var result = await analyzer.AnalyzeAssemblies(exeFile, Service);
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Members = result;
-                    ChooseAssemblies.Add("All Assemblies");
-                    Message = "Analyzing...Done!";
+                    if (Members.Count != 0)
+                    {
+                        IsAnalyzeEnabled = true;
+                        ChooseAssemblies.Add("All Assemblies");
+                        IsEnabled = true;
+                        Message = "Analyzing...Done!";
+                    }
+                    else
+                    {
+                        IsCheckVisible = Visibility.Visible;
+                        Message = "All APIs are compatibile!";
+                    }
                 });
             }
         });
+    }
+
+    public void CollapseIcons()
+    {
+        IsWarningVisible = Visibility.Collapsed;
+        IsErrorVisible = Visibility.Collapsed;
+        IsCheckVisible = Visibility.Collapsed;
     }
 
     public void AssemblyCollectionUpdate(string assem)
@@ -345,45 +383,38 @@ internal class MainViewModel : ViewModelBase
 
     private void ExecuteOpenFileDialog()
     {
+
         var dialog = new Microsoft.Win32.OpenFileDialog();
         dialog.Filter = "Project File (*.csproj)|*.csproj|All files (*.*)|*.*";
         dialog.InitialDirectory = @"C:\";
         bool? result = dialog.ShowDialog();
         if (result == true)
         {
+            IsEnabled = false;
             ResetAnalyzer();
             SelectedPath = dialog.FileName;
-        }
-        else
-        {
-            SelectedPath = null;
-            IsEnabled = false;
+            MSAnalyzer();
         }
 
-        MSAnalyzer();
+        IsAnalyzeEnabled = string.IsNullOrWhiteSpace(SelectedPath) ? false : true;
+
     }
 
     private void MSAnalyzer()
     {
+        CollapseIcons();
         MsBuildAnalyzer msBuild = new MsBuildAnalyzer();
         if (SelectedPath != null)
         {
             Info output = msBuild.GetAssemblies(SelectedPath);
             if (output != null)
             {
-                if (output.Package == false)
-                {
-                    Message = "Warning: In order to port to .NET Core," +
-            " NuGet References need to be in PackageReference format." +
-            " For more information go to the Portability Analyzer documentation.";
-                }
-
                 Config = output.Configuration;
                 Platform = output.Platform;
 
-                if (output.Package == true)
+                if (output.Package == false)
                 {
-                    IsIconVisible = Visibility.Visible;
+                    IsWarningVisible = Visibility.Visible;
                     Message = "In order to port to .NET Core, NuGet References need to be in PackageReference format. For more information go to the Portability Analyzer documentation.";
                 }
 
@@ -397,7 +428,7 @@ internal class MainViewModel : ViewModelBase
                     SelectedPlatform = Platform[0];
                 }
 
-                ExeFile = output.Location;
+                exeFile = output.Location;
             }
         }
     }
@@ -405,11 +436,10 @@ internal class MainViewModel : ViewModelBase
     private void ResetAnalyzer()
     {
         ChooseAssemblies.Clear();
-        AssemblyCollection.Clear();
         SelectedPath = null;
         Platform.Clear();
+        AssemblyCollection.Clear();
         Config.Clear();
-        IsEnabled = false;
         MSAnalyzer();
     }
 

@@ -18,7 +18,7 @@ namespace PortAPIUI
             Container = SetUp();
         }
 
-        public IContainer SetUp()
+        public static IContainer SetUp()
         {
             var productInformation = new ProductInformation("ApiPort_Console");
             var container = DependencyBuilder.Build(productInformation);

@@ -141,8 +141,6 @@ namespace ApiPort
 #else
             builder.RegisterType<ConsoleApiPort>()
                 .SingleInstance();
-            
-
             builder.RegisterAdapter<ICommandLineOptions, IApiPortOptions>((ctx, opts) =>
             {
                 if (opts.OutputFormats?.Any() == true)
