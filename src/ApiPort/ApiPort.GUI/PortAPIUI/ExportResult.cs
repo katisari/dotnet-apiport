@@ -7,6 +7,7 @@ using Microsoft.Fx.Portability.Reporting;
 using Microsoft.Fx.Portability.Resources;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -85,9 +86,16 @@ namespace PortAPIUI
                 }
                 else
                 {
-                    outputPath = await CreateReport(result.Data, exportPath, fileExtension, true);
+                    exportPath = await CreateReport(result.Data, exportPath, fileExtension, true);
                 }
             }
+            new Process
+            {
+                StartInfo = new ProcessStartInfo(exportPath)
+                {
+                    UseShellExecute = true
+                }
+            }.Start();
 
             return;
         }

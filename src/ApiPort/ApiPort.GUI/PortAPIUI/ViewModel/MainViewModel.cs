@@ -37,11 +37,11 @@ internal class MainViewModel : ViewModelBase
     private Visibility _isCheckVisible = Visibility.Collapsed;
 
     private bool _isEnabled = false;
-
     public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
 
-    private string format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
-                    + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
+    private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
+                    + "\n" + "msbuild.exe {0}  /p:Configuration=\"{1}\" /p:Platform=\"{2}\"";
+
 
     private static List<string> _config;
     private static List<string> _platform;
@@ -445,7 +445,7 @@ internal class MainViewModel : ViewModelBase
         var savedialog = new Microsoft.Win32.SaveFileDialog();
         savedialog.FileName = "PortablityAnalysisReport";
         savedialog.DefaultExt = ".text";
-        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
+        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Excel (*.xlsx)|*.xlsx|Csv (*.csv)|*.csv";
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {
