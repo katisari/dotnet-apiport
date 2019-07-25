@@ -70,6 +70,7 @@
                 <Image x:Name="CheckIcon" Source="check.png" Height="16" Visibility="{Binding IsCheckVisible}" Grid.Column="0"></Image>
                 <Image  x:Name="ErrorIcon" Source="StatusCriticalError_16x.png" Height="16" Visibility="{Binding IsErrorVisible}" Grid.Column="0"></Image>
                 <TextBox Padding="10"  BorderThickness="0" x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  TextWrapping="Wrap"  />
+
             </Grid>
 
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
