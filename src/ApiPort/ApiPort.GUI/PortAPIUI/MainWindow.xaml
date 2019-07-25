@@ -60,7 +60,7 @@
             </StackPanel>
             
            
-            <Grid x:Name="AssemCompatibility" HorizontalAlignment="Left" VerticalAlignment="Center"   Grid.ColumnSpan="3"  Margin="10" Visibility="{Binding IsMessageVisible}" >
+            <Grid x:Name="AssemCompatibility"  HorizontalAlignment="Left" VerticalAlignment="Center"   Grid.ColumnSpan="3"  Margin="10" Visibility="{Binding IsMessageVisible}" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*"/>
@@ -68,8 +68,9 @@
 
                 <Image x:Name="WarningIcon" Source="StatusWarning_16x.png" Height="16" Visibility="{Binding IsWarningVisible}" Grid.Column="0"></Image>
                 <Image x:Name="CheckIcon" Source="check.png" Height="16" Visibility="{Binding IsCheckVisible}" Grid.Column="0"></Image>
-                <Image x:Name="ErrorIcon" Source="StatusCriticalError_16x.png" Height="16" Visibility="{Binding IsErrorVisible}" Grid.Column="0"></Image>
-                <TextBox BorderThickness="0" Padding="10"  x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  TextWrapping="Wrap"  />
+                <Image  x:Name="ErrorIcon" Source="StatusCriticalError_16x.png" Height="16" Visibility="{Binding IsErrorVisible}" Grid.Column="0"></Image>
+                <TextBox Padding="10"  BorderThickness="0" x:Name="Status" Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"  TextWrapping="Wrap"  />
+
             </Grid>
 
             <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
