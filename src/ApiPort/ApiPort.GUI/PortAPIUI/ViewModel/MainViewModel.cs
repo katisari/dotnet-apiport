@@ -37,11 +37,10 @@ internal class MainViewModel : ViewModelBase
     private Visibility _isCheckVisible = Visibility.Collapsed;
 
     private bool _isEnabled = false;
+
     public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
-
-    private const string Format = "Please build your project first. To build your project, open a Developer Command Prompt and input:"
-                    + "\n" + "msbuild.exe {0}  /p:Configuration=\"{1}\" /p:Platform=\"{2}\"";
-
+    private string format = "Please build your project first. To build your project, open a Developer Command Prompt and input:"
+                    + "\n" + "msbuild {0}  /p:Configuration=\"{1}\" /p:Platform=\"{2}\"";
 
     private static List<string> _config;
     private static List<string> _platform;
