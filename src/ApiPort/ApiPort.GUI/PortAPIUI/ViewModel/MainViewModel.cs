@@ -37,7 +37,7 @@ internal class MainViewModel : ViewModelBase
 
     private bool _isEnabled = false;
 
-    private const string Format = "Error: Please build your project first. To build your project, open a Developer Command Prompt and input:"
+    private const string Format = "Please build your project first. To build your project, open a Developer Command Prompt and input:"
                     + "\n" + "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\msbuild.exe \"\"{0}\"\"  /p:Configuration=\"\"{1}\"\" /p:Platform=\"\"{2}\"\"";
 
     public List<string> _config;
