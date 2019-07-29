@@ -42,7 +42,7 @@ internal class MainViewModel : ViewModelBase
     private string format = "Please build your project first. To build your project, open a Developer Command Prompt and input:"
                     + "\n" + "msbuild {0}  /p:Configuration=\"{1}\" /p:Platform=\"{2}\"";
 
-    public List<string> config;
+    private List<string> _config;
 
     public RelayCommand Browse { get; set; }
 
@@ -54,11 +54,11 @@ internal class MainViewModel : ViewModelBase
 
     private List<string> _platform;
 
-    public string ExeFile;
+    private string _exefile;
 
-    public static string selectedConfig;
+    private static string selectedConfig;
 
-    public static string selectedPlatform;
+    private static string selectedPlatform;
 
     public string _selectedAssembly;
 
@@ -190,12 +190,12 @@ internal class MainViewModel : ViewModelBase
     {
         get
         {
-            return config;
+            return _config;
         }
 
         set
         {
-            config = value;
+            _config = value;
             RaisePropertyChanged(nameof(Config));
         }
     }
@@ -307,7 +307,7 @@ internal class MainViewModel : ViewModelBase
     {
         RegisterCommands();
         _assemblies = new List<string>();
-        config = new List<string>();
+        _config = new List<string>();
         _platform = new List<string>();
         _chooseAssemblies = new ObservableCollection<string>();
         _assembliesPath = new List<string>();
@@ -339,9 +339,9 @@ internal class MainViewModel : ViewModelBase
               else
               {
                   AssembliesPath = info.Assembly;
-                  ExeFile = info.Location;
+                  _exefile = info.Location;
                   ApiAnalyzer analyzer = new ApiAnalyzer();
-                  var result = await analyzer.AnalyzeAssemblies(ExeFile, Service);
+                  var result = await analyzer.AnalyzeAssemblies(_exefile, Service);
 
                   Application.Current.Dispatcher.Invoke(() =>
                   {
@@ -425,7 +425,7 @@ internal class MainViewModel : ViewModelBase
                     SetSelectedPlatform(Platform[0]);
                 }
 
-                ExeFile = output.Location;
+                _exefile = output.Location;
             }
         }
     }

@@ -21,7 +21,7 @@ namespace PortAPIUI
             var json1Path = System.IO.Path.Combine(ourDirectory, "MSBuildAnalyzer\\json1.txt");
             Process process = new Process();
             process.StartInfo.FileName = analyzerPath;
-            process.StartInfo.Arguments = $"{path} {"blank"} {MainViewModel.selectedConfig} {MainViewModel.selectedPlatform} {json1Path}";
+            process.StartInfo.Arguments = $"{path} {"blank"} {MainViewModel.GetSelectedConfig()} {MainViewModel.GetSelectedPlatform()} {json1Path}";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.Close();
