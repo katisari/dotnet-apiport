@@ -334,7 +334,7 @@ internal class MainViewModel : ViewModelBase
               if (info.Build == false)
               {
                   IsErrorVisible = Visibility.Visible;
-                  Message = string.Format(format, SelectedPath, SelectedConfig, SelectedPlatform);
+                  Message = string.Format(Format, SelectedPath, SelectedConfig, SelectedPlatform);
               }
               else
               {
