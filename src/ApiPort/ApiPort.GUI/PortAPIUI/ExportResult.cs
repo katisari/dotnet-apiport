@@ -77,7 +77,6 @@ namespace PortAPIUI
 
                 if (isCSV)
                 {
-
                     using (var writer = new StreamWriter(exportPath))
                     using (var csv = new CsvWriter(writer))
                     {
@@ -89,6 +88,7 @@ namespace PortAPIUI
                     exportPath = await CreateReport(result.Data, exportPath, fileExtension, true);
                 }
             }
+
             new Process
             {
                 StartInfo = new ProcessStartInfo(exportPath)

@@ -94,7 +94,6 @@ namespace PortAPIUI
             }
 
             return response?.MissingDependencies ?? new List<MemberInfo>();
-
         }
 
         public AnalyzeRequest GenerateRequestFromDepedencyInfo(string selectedPath, IApiPortService service)

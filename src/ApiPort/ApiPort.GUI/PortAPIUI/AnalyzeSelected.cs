@@ -3,7 +3,6 @@
 
 using Newtonsoft.Json;
 using PortAPI.Shared;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -22,15 +21,9 @@ namespace PortAPIUI
             var json1Path = System.IO.Path.Combine(ourDirectory, "MSBuildAnalyzer\\json1.txt");
             Process process = new Process();
             process.StartInfo.FileName = analyzerPath;
-            process.StartInfo.Arguments = $"{path} {"blank"} {MainViewModel._selectedConfig} {MainViewModel._selectedPlatform} {json1Path}";
+            process.StartInfo.Arguments = $"{path} {"blank"} {MainViewModel.GetSelectedConfig()} {MainViewModel.GetSelectedPlatform()} {json1Path}";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.CreateNoWindow = true;
-            outputConsole = new StringBuilder();
-            process.OutputDataReceived += OutputHandler;
-            process.Start();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
             process.Close();
             Info output;
             using (StreamReader r = new StreamReader(json1Path))

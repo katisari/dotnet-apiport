@@ -8,7 +8,6 @@ using Microsoft.Fx.Portability.ObjectModel;
 using PortAPI.Shared;
 using PortAPIUI;
 using PortAPIUI.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -38,17 +37,12 @@ internal class MainViewModel : ViewModelBase
 
     private bool _isEnabled = false;
 
-    public ObservableCollection<ApiViewModel> _assemblyCollection { get; set; }
+    public ObservableCollection<ApiViewModel> AssemblyCollection1 { get; set; }
+
     private string format = "Please build your project first. To build your project, open a Developer Command Prompt and input:"
                     + "\n" + "msbuild {0}  /p:Configuration=\"{1}\" /p:Platform=\"{2}\"";
 
-    private static List<string> _config;
-    private static List<string> _platform;
-    private static string exeFile;
-    public static string _selectedConfig;
-    public static string _selectedPlatform;
-    private static string _selectedAssembly;
-    private static IList<MemberInfo> _members;
+    private List<string> _config;
 
     public RelayCommand Browse { get; set; }
 
@@ -57,6 +51,18 @@ internal class MainViewModel : ViewModelBase
     public RelayCommand Analyze { get; set; }
 
     public IApiPortService Service { get; set; }
+
+    private List<string> _platform;
+
+    private string _exefile;
+
+    private static string selectedConfig;
+
+    private static string selectedPlatform;
+
+    public string _selectedAssembly;
+
+    private IList<MemberInfo> _members;
 
     public bool IsAnalyzeEnabled
     {
@@ -160,12 +166,12 @@ internal class MainViewModel : ViewModelBase
     {
         get
         {
-            return _assemblyCollection;
+            return AssemblyCollection1;
         }
 
         set
         {
-            _assemblyCollection = value;
+            AssemblyCollection1 = value;
             RaisePropertyChanged(nameof(AssemblyCollection));
         }
     }
@@ -224,10 +230,7 @@ internal class MainViewModel : ViewModelBase
 
     public List<string> AssembliesPath
     {
-        get
-        {
-            return _assembliesPath;
-        }
+        get => _assembliesPath;
 
         set
         {
@@ -250,29 +253,26 @@ internal class MainViewModel : ViewModelBase
         }
     }
 
-    public string SelectedConfig
+    public static string GetSelectedConfig()
     {
-        get => _selectedConfig;
-
-        set
-        {
-            _selectedConfig = value;
-            RaisePropertyChanged(nameof(SelectedConfig));
-        }
+        return selectedConfig;
     }
 
-    public string SelectedPlatform
+    public void SetSelectedConfig(string value)
     {
-        get
-        {
-            return _selectedPlatform;
-        }
+        selectedConfig = value;
+        RaisePropertyChanged("SelectedConfig");
+    }
 
-        set
-        {
-            _selectedPlatform = value;
-            RaisePropertyChanged("SelectedPlatfrom");
-        }
+    public static string GetSelectedPlatform()
+    {
+        return selectedPlatform;
+    }
+
+    public void SetSelectedPlatform(string value)
+    {
+        selectedPlatform = value;
+        RaisePropertyChanged("SelectedPlatfrom");
     }
 
     public string SelectedAssembly
@@ -326,6 +326,7 @@ internal class MainViewModel : ViewModelBase
         IsAnalyzeEnabled = false;
         Message = "Analyzing...";
         CollapseIcons();
+
         _ = Task.Run(async () =>
           {
               Info info = AnalyzeSelected.ChosenBuild(SelectedPath);
@@ -333,14 +334,14 @@ internal class MainViewModel : ViewModelBase
               if (info.Build == false)
               {
                   IsErrorVisible = Visibility.Visible;
-                  Message = string.Format(format, SelectedPath, SelectedConfig, SelectedPlatform);
+                  Message = string.Format(format, SelectedPath, GetSelectedConfig(), GetSelectedPlatform());
               }
               else
               {
                   AssembliesPath = info.Assembly;
-                  exeFile = info.Location;
+                  _exefile = info.Location;
                   ApiAnalyzer analyzer = new ApiAnalyzer();
-                  var result = await analyzer.AnalyzeAssemblies(exeFile, Service);
+                  var result = await analyzer.AnalyzeAssemblies(_exefile, Service);
 
                   Application.Current.Dispatcher.Invoke(() =>
                   {
@@ -355,7 +356,7 @@ internal class MainViewModel : ViewModelBase
                       else
                       {
                           IsCheckVisible = Visibility.Visible;
-                          Message = "All APIs are compatible!";
+                          Message = "All APIs are compatibile!";
                       }
                   });
               }
@@ -416,15 +417,15 @@ internal class MainViewModel : ViewModelBase
 
                 if (Config.Count > 0)
                 {
-                    SelectedConfig = Config[0];
+                    SetSelectedConfig(Config[0]);
                 }
 
                 if (Platform.Count > 0)
                 {
-                    SelectedPlatform = Platform[0];
+                    SetSelectedPlatform(Platform[0]);
                 }
 
-                exeFile = output.Location;
+                _exefile = output.Location;
             }
         }
     }
@@ -442,9 +443,9 @@ internal class MainViewModel : ViewModelBase
     private void ExecuteSaveFileDialog()
     {
         var savedialog = new Microsoft.Win32.SaveFileDialog();
-        savedialog.FileName = "PortablityAnalysisReport";
+        savedialog.FileName = "PortabilityAnalyzerReport";
         savedialog.DefaultExt = ".text";
-        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Excel (*.xlsx)|*.xlsx|Csv (*.csv)|*.csv";
+        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {

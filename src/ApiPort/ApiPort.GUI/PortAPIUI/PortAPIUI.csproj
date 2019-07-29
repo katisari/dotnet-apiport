@@ -31,16 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove=".net_core_icon.png" />
-    <None Remove="BrandDotNet.ico" />
-    <None Remove="check.png" />
-    <None Remove="StatusCriticalError_16x.png" />
-    <None Remove="StatusWarning_16x.png" />
-    <None Remove="warning_icon.png" />
-    <None Remove="x.png" />
-  </ItemGroup>
-
-  <ItemGroup>
 
     <PackageReference Include="Autofac" Version="4.9.2" />
 
@@ -61,7 +51,6 @@
     <Resource Include="check.png" />
     <Resource Include="StatusCriticalError_16x.png" />
     <Resource Include="StatusWarning_16x.png" />
-    <Resource Include="warning_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -69,10 +58,6 @@
     <ProjectReference Include="..\..\..\lib\Microsoft.Fx.Portability\Microsoft.Fx.Portability.csproj" />
     <ProjectReference Include="..\..\ApiPort\ApiPort.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="x.png" />
   </ItemGroup>
 
   <ItemGroup>
