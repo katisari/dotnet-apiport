@@ -29,7 +29,12 @@ Use the following instructions to run the Portability Analyzer.
 
 If your project is not built, an error warning will pop up to remind you to build your project so that the .exe file can be found by the analyzer. In addition, if your project is not using PackageReference for your NuGet packages, a warning will appear. Having your NuGet packages in ProjectReference format is not neccesary in order to use the analyzer, however if you wish to convert your project to .NET Core you will need to migrate your NuGet packages to PackageReference ([How to migrate packages for porting](https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference))
 
+### Publishing
 
+If you want to create your own publishing of the analyzer in Visual Studio follow these steps:
+    1. Right click on PortAPIUI and choose publish, picking the desired configuration and location.
+    2. Once you have your published folder copy and paste the .exe,.config,and .dlls of the library project BuildProj into the published folder.
+    3. Now, you can run the PortAPIUI.exe without errors.
 
 ### Summary
 
