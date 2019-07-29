@@ -77,7 +77,6 @@ namespace PortAPIUI
 
                 if (isCSV)
                 {
-
                     using (var writer = new StreamWriter(exportPath))
                     using (var csv = new CsvWriter(writer))
                     {
@@ -140,7 +139,6 @@ namespace PortAPIUI
                                 UseShellExecute = true
                             }
                         }.Start();
-
                     }
                 }
                 else
