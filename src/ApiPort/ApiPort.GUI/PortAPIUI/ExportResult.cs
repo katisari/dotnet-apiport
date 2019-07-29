@@ -77,6 +77,7 @@ namespace PortAPIUI
 
                 if (isCSV)
                 {
+
                     using (var writer = new StreamWriter(exportPath))
                     using (var csv = new CsvWriter(writer))
                     {
@@ -88,14 +89,10 @@ namespace PortAPIUI
                     exportPath = await CreateReport(result.Data, exportPath, fileExtension, true);
                 }
             }
+            OpenFileToScreen(exportPath, fileExtension);
 
-            new Process
-            {
-                StartInfo = new ProcessStartInfo(exportPath)
-                {
-                    UseShellExecute = true
-                }
-            }.Start();
+
+
 
             return;
         }
@@ -116,6 +113,53 @@ namespace PortAPIUI
                 default:
                     return "json";
             }
+        }
+
+        private void OpenFileToScreen(string exportPath, string fileExtension)
+        {
+            // automatically open the file
+
+
+            try
+            {
+                if (fileExtension == ".csv")
+                {
+                    Type officeType = Type.GetTypeFromProgID("Excel.Application");
+                    if (officeType == null)
+                    {
+                        // open with notepad when no Excel installed
+                        System.Diagnostics.Process.Start("notepad.exe", exportPath);
+                    }
+                    else
+                    {
+                        // Excel installed
+                        new Process
+                        {
+                            StartInfo = new ProcessStartInfo(exportPath)
+                            {
+                                UseShellExecute = true
+                            }
+                        }.Start();
+
+                    }
+                }
+                else
+                {
+                    new Process
+                    {
+                        StartInfo = new ProcessStartInfo(exportPath)
+                        {
+                            UseShellExecute = true
+                        }
+                    }.Start();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception Message: " + ex.Message);
+            }
+
         }
 
         private static string GenerateReportPath(string fileExtension)

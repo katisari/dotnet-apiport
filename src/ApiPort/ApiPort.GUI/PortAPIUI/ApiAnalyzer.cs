@@ -26,7 +26,7 @@ namespace PortAPIUI
         private readonly IReportGenerator _reportGenerator;
         private readonly IEnumerable<IgnoreAssemblyInfo> _assembliesToIgnore;
         private readonly IFileWriter _writer;
-        private const string json = "json";
+        private const string Json = "json";
 
         private ImmutableDictionary<IAssemblyFile, bool> InputAssemblies { get; }
 
@@ -68,7 +68,7 @@ namespace PortAPIUI
 
             foreach (var result in myResult)
             {
-                if (string.Equals(json, result.Format, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(Json, result.Format, StringComparison.OrdinalIgnoreCase))
                 {
                     response = result.Data?.Deserialize<AnalyzeResponse>();
                     if (jsonAdded)
@@ -94,12 +94,14 @@ namespace PortAPIUI
             }
 
             return response?.MissingDependencies ?? new List<MemberInfo>();
+
         }
 
         public AnalyzeRequest GenerateRequestFromDepedencyInfo(string selectedPath, IApiPortService service)
         {
             var parentDirectory = System.IO.Directory.GetParent(selectedPath).FullName;
 
+            // var parentDirectory = @"C:\Users\t-jaele\Downloads\Paint\Paint";
 #pragma warning disable CS0436 // Type conflicts with imported type
             var name = new FilePathAssemblyFile(selectedPath);
 #pragma warning restore CS0436 // Type conflicts with imported type
