@@ -37,7 +37,7 @@
 
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" Margin="10,10,10,9.84" Grid.ColumnSpan="2" >
             
-            <Label Content= "Path to application folder: "  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="0,5,5,5"  />
+            <Label Content= "Path to csproj file: "  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="0,5,5,5"  />
             <TextBox   Name="PathTextbox" Text = "{Binding SelectedPath}"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Padding="5"  />
             
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" >
@@ -73,7 +73,7 @@
 
             </Grid>
 
-            <Label Content="Incompatibility API's:"  Padding="0,5,5,5" ></Label>
+            <Label Content="Incompatible APIs:"  Padding="0,5,5,5" ></Label>
             
             <DataGrid IsEnabled="{Binding Path=IsEnabled}"  x:Name="APIGrid"  MaxHeight="450" BorderBrush="#FFABADB3"  ItemsSource="{Binding Path= AssemblyCollection}"  AutoGenerateColumns="False" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.CanContentScroll="True" >
 
