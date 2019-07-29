@@ -328,39 +328,39 @@ internal class MainViewModel : ViewModelBase
         CollapseIcons();
 
         _ = Task.Run(async () =>
-          {
-              Info info = AnalyzeSelected.ChosenBuild(SelectedPath);
+        {
+            Info info = AnalyzeSelected.ChosenBuild(SelectedPath);
 
-              if (info.Build == false)
-              {
-                  IsErrorVisible = Visibility.Visible;
-                  Message = string.Format(format, SelectedPath, GetSelectedConfig(), GetSelectedPlatform());
-              }
-              else
-              {
-                  AssembliesPath = info.Assembly;
-                  _exefile = info.Location;
-                  ApiAnalyzer analyzer = new ApiAnalyzer();
-                  var result = await analyzer.AnalyzeAssemblies(_exefile, Service);
+            if (info.Build == false)
+            {
+                IsErrorVisible = Visibility.Visible;
+                Message = string.Format(format, SelectedPath, GetSelectedConfig(), GetSelectedPlatform());
+            }
+            else
+            {
+                AssembliesPath = info.Assembly;
+                _exefile = info.Location;
+                ApiAnalyzer analyzer = new ApiAnalyzer();
+                var result = await analyzer.AnalyzeAssemblies(_exefile, Service);
 
-                  Application.Current.Dispatcher.Invoke(() =>
-                  {
-                      Members = result;
-                      if (Members.Count != 0)
-                      {
-                          IsAnalyzeEnabled = true;
-                          ChooseAssemblies.Add("All Assemblies");
-                          IsEnabled = true;
-                          Message = "Analyzing...Done!";
-                      }
-                      else
-                      {
-                          IsCheckVisible = Visibility.Visible;
-                          Message = "All APIs are compatibile!";
-                      }
-                  });
-              }
-          });
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Members = result;
+                    if (Members.Count != 0)
+                    {
+                        IsAnalyzeEnabled = true;
+                        ChooseAssemblies.Add("All Assemblies");
+                        IsEnabled = true;
+                        Message = "Analyzing...Done!";
+                    }
+                    else
+                    {
+                        IsCheckVisible = Visibility.Visible;
+                        Message = "All APIs are compatibile!";
+                    }
+                });
+            }
+        });
     }
 
     public void CollapseIcons()
@@ -445,7 +445,7 @@ internal class MainViewModel : ViewModelBase
         var savedialog = new Microsoft.Win32.SaveFileDialog();
         savedialog.FileName = "PortabilityAnalyzerReport";
         savedialog.DefaultExt = ".text";
-        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Csv (*.csv)|*.csv";
+        savedialog.Filter = "HTML file (*.html)|*.html|Json (*.json)|*.json|Excel (*.xlsx)|*.xlsx|Csv (*.csv)|*.csv";
         bool? result = savedialog.ShowDialog();
         if (result == true)
         {
